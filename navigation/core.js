@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 
@@ -26,13 +27,13 @@ export default function CoreRoutes() {
           ),
         }}
         name="Create"
-        component={Create}
+        component={Home}
       />
 
       <Tab.Screen
         options={{
           tabBarIcon: ({color, size}) => (
-            <Icon name="ios-notifications-outline" color={color} size={size} />
+            <Icon name="search-outline" color={color} size={size} />
           ),
         }}
         name="Notification"
@@ -46,7 +47,7 @@ export default function CoreRoutes() {
           ),
         }}
         name="HomePage"
-        component={Home}
+        component={Create}
       />
       <Tab.Screen
         options={{
@@ -61,7 +62,10 @@ export default function CoreRoutes() {
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
-              source={require('../src/assets/images/profile.png')}
+              source={{
+                uri:
+                  'https://images.unsplash.com/photo-1594270410221-e6a33cbc6fb9?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MzV8fGh1bWFufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+              }}
               color={color}
               style={{
                 width: size,

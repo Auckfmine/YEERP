@@ -2,7 +2,6 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
 import {
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -10,23 +9,32 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+
+import Icon from 'react-native-vector-icons/Ionicons';
+
+import Music from '../user/userMusic';
+import Posts from '../user/userPosts';
+import Videos from '../user/userVideos';
+const Tab = createMaterialTopTabNavigator();
 
 const ProfileScreen = () => {
-  console.log('heelo');
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor="#121212" />
       <View style={styles.topHalf}>
         <View style={styles.topBar}>
           <Text style={styles.text}>Profile</Text>
-          <Icon style={styles.homeIcon} size={24} name="menu" />
+          <Icon style={styles.homeIcon} size={30} name="menu" />
         </View>
 
         <View style={styles.UserInfo}>
           <Image
             style={styles.ProfileImage}
-            source={require('../../assets/images/profile.png')}
+            source={{
+              uri:
+                'https://images.unsplash.com/photo-1594270410221-e6a33cbc6fb9?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MzV8fGh1bWFufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+            }}
           />
           <Text style={styles.userInfoText}>Postes</Text>
           <Text style={styles.userInfoText}>Folowers</Text>
@@ -52,10 +60,48 @@ const ProfileScreen = () => {
         </View>
       </View>
 
-      <View style={{flex: 1}}>
-        <Text>amine</Text>
+      <View style={styles.bottomHalf}>
+        <Tab.Navigator
+          tabBarOptions={{
+            style: {backgroundColor: 'black'},
+            showLabel: false,
+            showIcon: true,
+          }}>
+          <Tab.Screen
+            options={{
+              tabBarIcon: ({color, size}) => (
+                <Icon name="md-image-outline" color="white" size={24} />
+              ),
+            }}
+            name="Music"
+            component={Music}
+          />
+
+          <Tab.Screen
+            options={{
+              tabBarIcon: ({color, size}) => (
+                <Icon name="ios-videocam-outline" color="white" size={24} />
+              ),
+            }}
+            name="Videos"
+            component={Videos}
+          />
+          <Tab.Screen
+            options={{
+              tabBarIcon: ({color, size}) => (
+                <Icon
+                  name="ios-musical-notes-outline"
+                  color="white"
+                  size={24}
+                />
+              ),
+            }}
+            name="Posts"
+            component={Posts}
+          />
+        </Tab.Navigator>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -67,7 +113,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#121212',
   },
   topHalf: {
-    marginHorizontal: 10,
+    marginHorizontal: '5%',
   },
   text: {
     color: '#F9F9F9',
@@ -111,5 +157,10 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderColor: '#F9F9F9',
+  },
+
+  bottomHalf: {
+    flex: 1,
+    marginTop: '5%',
   },
 });

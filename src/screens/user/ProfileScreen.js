@@ -18,14 +18,16 @@ import Posts from '../user/userPosts';
 import Videos from '../user/userVideos';
 const Tab = createMaterialTopTabNavigator();
 
-const ProfileScreen = () => {
+const ProfileScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#121212" />
       <View style={styles.topHalf}>
         <View style={styles.topBar}>
           <Text style={styles.text}>Profile</Text>
-          <Icon style={styles.homeIcon} size={30} name="menu" />
+          <TouchableOpacity style={styles.homeIcon}>
+            <Icon style={{color: '#F9F9F9'}} size={30} name="menu" />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.UserInfo}>
@@ -47,7 +49,14 @@ const ProfileScreen = () => {
           </Text>
         </View>
         <View style={styles.editProfile}>
-          <TouchableOpacity style={styles.editProfileBtn}>
+          <TouchableOpacity
+            style={styles.editProfileBtn}
+            onPress={() => {
+              navigation.navigate('EditProfile', {
+                logo:
+                  'https://images.unsplash.com/photo-1594270410221-e6a33cbc6fb9?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MzV8fGh1bWFufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+              });
+            }}>
             <Text
               style={{
                 color: 'white',
@@ -125,7 +134,6 @@ const styles = StyleSheet.create({
   },
   homeIcon: {
     position: 'absolute',
-    color: '#F9F9F9',
     right: 0,
   },
   ProfileImage: {
@@ -156,7 +164,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#F9F9F9',
+
+    shadowColor: '#fff',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 1,
+    shadowRadius: 2,
+    elevation: 4,
   },
 
   bottomHalf: {

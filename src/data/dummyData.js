@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 export const Posts = [
   {
     id: 1,

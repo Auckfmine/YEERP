@@ -16,7 +16,10 @@ import Forget3 from './src/screens/auth/forgetPasswordStep3';
 import splashScreen from './src/screens/splash';
 import Profile from './src/screens/user/profile';
 import ProfileScreen from './src/screens/user/ProfileScreen';
+import EditProfile from './src/screens/user/editProfile';
 import Core from './navigation/core';
+import ImageViewer from './src/components/imageViewer';
+import videoPlayer from './src/components/videoPlayer';
 
 //navigation
 const stack = createStackNavigator();
@@ -48,6 +51,9 @@ const App = ({navigation}) => {
                 <stack.Screen name="Forget2" component={Forget2} />
                 <stack.Screen name="Forget3" component={Forget3} />
                 <stack.Screen name="Profile" component={Profile} />
+                <stack.Screen name="Viewer" component={ImageViewer} />
+                <stack.Screen name="Video" component={videoPlayer} />
+                <stack.Screen name="EditProfile" component={EditProfile} />
               </stack.Navigator>
             </NavigationContainer>
           </SafeAreaProvider>

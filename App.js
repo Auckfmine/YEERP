@@ -28,6 +28,7 @@ const stack = createStackNavigator();
 import {Provider} from 'react-redux';
 import store from './store';
 import Login from './src/screens/auth/login';
+
 const App = ({navigation}) => {
   const [isLoaded, setIsLoaded] = useState(false);
 

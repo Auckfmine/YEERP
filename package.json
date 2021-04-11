@@ -29,6 +29,7 @@
     "react-native-confirmation-code-field": "^7.0.1",
     "react-native-elements": "^3.3.2",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-image-picker": "^3.3.2",
     "react-native-image-zoom-viewer": "^3.0.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.3",
     "react-native-loading-spinner-overlay": "^2.0.0",
@@ -45,6 +46,7 @@
     "react-native-vector-icons": "^8.1.0",
     "react-native-video": "^5.1.1",
     "react-redux": "^7.2.3",
+    "reanimated-bottom-sheet": "^1.0.0-alpha.22",
     "redux": "^4.0.5"
   },
   "devDependencies": {

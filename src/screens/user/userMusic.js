@@ -16,18 +16,15 @@ const tile = screenSize / 2;
 const userId = '605911e7452cd506f053c3db'; //user id need to get imported from redux state
 
 const UserMusic = ({navigation}) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     //get the images for the specific user from the backend
     const getData = async () => {
       try {
-        setIsLoading(true);
         const response = await api.get(`/user/${userId}/images`);
         //console.log(response.data);
         setData(response.data.photos);
-        setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -47,7 +44,7 @@ const UserMusic = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {isLoading ? (
+      {data.length === 0 ? (
         <ActivityIndicator style={styles.loader} size="large" color="white" />
       ) : (
         <FlatList

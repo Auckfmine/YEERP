@@ -20,7 +20,7 @@ import EditProfile from './src/screens/user/editProfile';
 import Core from './navigation/core';
 import ImageViewer from './src/components/imageViewer';
 import videoPlayer from './src/components/videoPlayer';
-
+import MusicPlayer from './src/components/musicPlayer';
 //navigation
 const stack = createStackNavigator();
 
@@ -54,6 +54,7 @@ const App = ({navigation}) => {
                 <stack.Screen name="Profile" component={Profile} />
                 <stack.Screen name="Viewer" component={ImageViewer} />
                 <stack.Screen name="Video" component={videoPlayer} />
+                <stack.Screen name="MusicPlayer" component={MusicPlayer} />
                 <stack.Screen name="EditProfile" component={EditProfile} />
               </stack.Navigator>
             </NavigationContainer>

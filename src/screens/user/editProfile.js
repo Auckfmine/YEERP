@@ -16,6 +16,8 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 const EditProfile = ({route, navigation}) => {
   const sheetRef = React.createRef();
   const {logo} = route.params;
+
+  //a function to handle opening the camera
   const takePhotoFromCamera = () => {
     launchCamera(
       {
@@ -23,13 +25,14 @@ const EditProfile = ({route, navigation}) => {
         maxHeight: 300,
         cameraType: 'back',
         quality: 0.7,
+        saveToPhotos: true,
       },
       res => {
         console.log(res);
       },
     );
   };
-
+  //function to handle opening the phone's library
   const choosePhotoFromLibrary = () => {
     launchImageLibrary(
       {
@@ -42,7 +45,7 @@ const EditProfile = ({route, navigation}) => {
       },
     );
   };
-
+  // a function to show the  sliding modal
   const renderContent = () => (
     <View style={styles.panel}>
       <View style={{alignItems: 'center'}}>
@@ -69,6 +72,7 @@ const EditProfile = ({route, navigation}) => {
     </View>
   );
 
+  //the view of the page
   return (
     <ScrollView style={styles.container}>
       <BottomSheet
@@ -162,7 +166,7 @@ const styles = StyleSheet.create({
   //modal styles here
   panel: {
     padding: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'gray',
     paddingTop: 20,
     // borderTopLeftRadius: 20,
     // borderTopRightRadius: 20,
@@ -184,6 +188,7 @@ const styles = StyleSheet.create({
   panelTitle: {
     fontSize: 27,
     height: 35,
+    color: 'white',
   },
   panelSubtitle: {
     fontSize: 14,
@@ -194,7 +199,7 @@ const styles = StyleSheet.create({
   panelButton: {
     padding: 13,
     borderRadius: 10,
-    backgroundColor: '#FF6347',
+    backgroundColor: '#121212',
     alignItems: 'center',
     marginVertical: 7,
   },

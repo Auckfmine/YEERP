@@ -1,35 +1,67 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import {FlatList, Image, StyleSheet, View, Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  View,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import api from '../../../api/apiCall';
 const {Posts} = require('../../data/dummyData');
 const screenSize = Dimensions.get('window').width;
 const tile = screenSize / 2;
-const userMusic = ({navigation}) => {
+const userId = '605911e7452cd506f053c3db'; //user id need to get imported from redux state
+
+const UserMusic = ({navigation}) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    //get the images for the specific user from the backend
+    const getData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await api.get(`/user/${userId}/images`);
+        //console.log(response.data);
+        setData(response.data.photos);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getData();
+  }, []);
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate('Viewer', {url: [{url: item.image}]});
+          navigation.navigate('Viewer', {url: [{url: item.url}]});
         }}>
-        <Image style={styles.image} source={{uri: item.image}} />
+        <Image style={styles.image} source={{uri: item.url}} />
       </TouchableOpacity>
     );
   };
 
   return (
     <View style={styles.container}>
-      <FlatList
-        numColumns={2}
-        keyExtractor={item => item.id}
-        data={Posts}
-        renderItem={renderItem}
-      />
+      {isLoading ? (
+        <ActivityIndicator style={styles.loader} size="large" color="white" />
+      ) : (
+        <FlatList
+          numColumns={2}
+          keyExtractor={item => item._id}
+          data={data}
+          renderItem={renderItem}
+        />
+      )}
     </View>
   );
 };
 
-export default userMusic;
+export default UserMusic;
 
 const styles = StyleSheet.create({
   container: {
@@ -40,4 +72,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   image: {height: tile, width: tile, marginLeft: 2, marginTop: 2},
+  loader: {
+    position: 'absolute',
+    left: '45%',
+    top: '45%',
+  },
 });

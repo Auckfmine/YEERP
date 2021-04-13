@@ -11,6 +11,7 @@ import Create from '../src/screens/core/create';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Image} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AddButton from '../src/components/tabBar/addButton';
 const Tab = createBottomTabNavigator();
 
 export default function CoreRoutes() {

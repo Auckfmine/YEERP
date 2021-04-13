@@ -17,7 +17,8 @@ import Music from '../user/userMusic';
 import Posts from '../user/userPosts';
 import Videos from '../user/userVideos';
 const Tab = createMaterialTopTabNavigator();
-
+const url =
+  'https://yeerp-back-end.herokuapp.com/uploads/images/image-1618320058321.jpg';
 const ProfileScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
@@ -34,8 +35,7 @@ const ProfileScreen = ({navigation}) => {
           <Image
             style={styles.ProfileImage}
             source={{
-              uri:
-                'https://images.unsplash.com/photo-1594270410221-e6a33cbc6fb9?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MzV8fGh1bWFufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+              uri: url,
             }}
           />
           <Text style={styles.userInfoText}>Postes</Text>
@@ -53,8 +53,7 @@ const ProfileScreen = ({navigation}) => {
             style={styles.editProfileBtn}
             onPress={() => {
               navigation.navigate('EditProfile', {
-                logo:
-                  'https://images.unsplash.com/photo-1594270410221-e6a33cbc6fb9?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MzV8fGh1bWFufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+                logo: url,
               });
             }}>
             <Text

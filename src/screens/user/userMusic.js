@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {
   FlatList,
@@ -10,24 +11,24 @@ import {
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import api from '../../../api/apiCall';
-const {Posts} = require('../../data/dummyData');
+
 const screenSize = Dimensions.get('window').width;
 const tile = screenSize / 2;
 const userId = '605911e7452cd506f053c3db'; //user id need to get imported from redux state
 
 const UserMusic = ({navigation}) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     //get the images for the specific user from the backend
     const getData = async () => {
-      try {
-        const response = await api.get(`/user/${userId}/images`);
-        //console.log(response.data);
-        setData(response.data.photos);
-      } catch (error) {
-        console.log(error);
-      }
+      setIsLoading(true);
+
+      const response = await api.get(`/user/${userId}/images`);
+      //console.log(response.data.photos);
+      setData(response.data.photos);
+      setIsLoading(false);
     };
     getData();
   }, []);
@@ -44,8 +45,8 @@ const UserMusic = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {data.length === 0 ? (
-        <ActivityIndicator style={styles.loader} size="large" color="white" />
+      {isLoading ? (
+        <ActivityIndicator style={styles.loader} color="white" />
       ) : (
         <FlatList
           numColumns={2}

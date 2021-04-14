@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -16,10 +16,35 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Music from '../user/userMusic';
 import Posts from '../user/userPosts';
 import Videos from '../user/userVideos';
+import axios from 'axios';
 const Tab = createMaterialTopTabNavigator();
-const url =
-  'https://yeerp-back-end.herokuapp.com/uploads/images/image-1618320058321.jpg';
+const User = {
+  role: 0,
+  _id: '605cb57eb7d46e3dd8b91b4f',
+  userName: 'Auckfmine',
+  email: 'mouhamedaminerouatbi@gmail.com',
+  password: '$2b$10$Ixi5MaIoGHoI8VKHkr8d9euuhfhsghZuBXOROGaBUm9TMd.uY5SLS',
+  __v: 0,
+  secretNum: 7379,
+  photo: 'http://10.0.0.1:8000/uploads\\images\\image-1618397182003.png',
+};
+
 const ProfileScreen = ({navigation}) => {
+  const [user, setUser] = useState('');
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const response = await axios.get(
+          'https://yeerp-back-end.herokuapp.com/user/605cb57eb7d46e3dd8b91b4f',
+        );
+        setUser(response.data.user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getUser();
+  }, []);
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#121212" />
@@ -35,7 +60,7 @@ const ProfileScreen = ({navigation}) => {
           <Image
             style={styles.ProfileImage}
             source={{
-              uri: url,
+              uri: User.photo,
             }}
           />
           <Text style={styles.userInfoText}>Postes</Text>
@@ -53,7 +78,7 @@ const ProfileScreen = ({navigation}) => {
             style={styles.editProfileBtn}
             onPress={() => {
               navigation.navigate('EditProfile', {
-                logo: url,
+                logo: User.photo,
               });
             }}>
             <Text

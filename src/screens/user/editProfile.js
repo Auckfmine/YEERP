@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import * as React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,15 +8,34 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Platform,
 } from 'react-native';
 import Input from '../../components/userProfileComponnents/input';
 import {Divider} from 'react-native-elements';
 import BottomSheet from 'reanimated-bottom-sheet';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import axios from 'axios';
+const USER_ID = '605911e7452cd506f053c3db';
 const EditProfile = ({route, navigation}) => {
+  const [image, setImage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const sheetRef = React.createRef();
   const {logo} = route.params;
+  const createFormData = (photo, body = {}) => {
+    const data = new FormData();
 
+    data.append('file', {
+      name: photo.fileName,
+      type: photo.type,
+      uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+    });
+
+    Object.keys(body).forEach(key => {
+      data.append(key, body[key]);
+    });
+
+    return data;
+  };
   //a function to handle opening the camera
   const takePhotoFromCamera = () => {
     launchCamera(
@@ -41,10 +60,33 @@ const EditProfile = ({route, navigation}) => {
         mediaType: 'photo',
       },
       res => {
+        setImage(res);
         console.log(res);
+        handleUploadPhoto();
       },
     );
   };
+  const handleUploadPhoto = () => {
+    setIsLoading(true);
+    axios
+      .post(
+        `http://yeerp-back-end.herokuapp.com/upload/${USER_ID}`,
+        createFormData(image),
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
+      .then(response => {
+        console.log('response', response.data);
+      })
+      .catch(error => {
+        console.log('error', error.message);
+      });
+    setIsLoading(false);
+  };
+
   // a function to show the  sliding modal
   const renderContent = () => (
     <View style={styles.panel}>

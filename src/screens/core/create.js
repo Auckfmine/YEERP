@@ -1,10 +1,12 @@
 /* eslint-disable prettier/prettier */
+
+import React, {useState} from 'react';
 import axios from 'axios';
-import React from 'react';
 import {View, Image, Button, Platform} from 'react-native';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 
 const SERVER_URL = 'http://localhost:8000';
+const USER_ID = '605911e7452cd506f053c3db';
 
 const createFormData = (photo, body = {}) => {
   const data = new FormData();
@@ -23,8 +25,10 @@ const createFormData = (photo, body = {}) => {
 };
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [photo, setPhoto] = React.useState(null);
-  console.log(createFormData(photo));
+
+  //this function allows us to chose a photo from the library
   const handleChoosePhoto = () => {
     launchImageLibrary({noData: true}, response => {
       // console.log(response);
@@ -35,25 +39,36 @@ const App = () => {
     });
   };
 
+  // this function allow us to take a picture and upload it directly
+
+  /* const handleTakePhoto = () => {
+    launchCamera({mediaType: 'photo', saveToPhotos: true}, response => {
+      if (response) {
+        console.log(response);
+      }
+    });
+  };*/
+
+  //this function allows us to upload the current image found in the state (from library or from take photo)
   const handleUploadPhoto = () => {
+    setIsLoading(true);
     axios
       .post(
-        'http://localhost:8000/upload/605911e7452cd506f053c3db',
+        `http://yeerp-back-end.herokuapp.com/upload/${USER_ID}`,
         createFormData(photo),
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Accept: '*/*',
           },
         },
       )
-      .then(response => response.json())
       .then(response => {
-        console.log('response', response);
+        console.log('response', response.data);
       })
       .catch(error => {
         console.log('error', error.message);
       });
+    setIsLoading(false);
   };
 
   return (
@@ -61,7 +76,10 @@ const App = () => {
       {photo && (
         <>
           <Image source={{uri: photo.uri}} style={{width: 300, height: 300}} />
-          <Button title="Upload Photo" onPress={handleUploadPhoto} />
+          <Button
+            title={isLoading ? 'uploading ...' : 'Upload Photo'}
+            onPress={handleUploadPhoto}
+          />
         </>
       )}
       <Button title="Choose Photo" onPress={handleChoosePhoto} />

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,6 +9,7 @@ import {
   Image,
   ScrollView,
   Platform,
+  Alert,
 } from 'react-native';
 import Input from '../../components/userProfileComponnents/input';
 import {Divider} from 'react-native-elements';
@@ -18,6 +19,8 @@ import axios from 'axios';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {getUserProfile} from '../../../redux/user/userAction';
+import api from '../../../api/apiCall';
+import {onChange} from 'react-native-reanimated';
 
 const createFormData = (photo, body = {}) => {
   const data = new FormData();
@@ -36,10 +39,12 @@ const createFormData = (photo, body = {}) => {
 };
 
 const EditProfile = ({route, navigation}) => {
-  const [image, setImage] = useState('');
+  const userData = useSelector(state => state.user.user);
+  const [image, setImage] = useState({uri: route.params.logo});
   const [isLoading, setIsLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState(userData);
   const sheetRef = React.createRef();
-  const ProfileImage = useSelector(state => state.user.user.photo);
+
   const dispatch = useDispatch();
   const USER_ID = useSelector(state => state.user.user._id);
 
@@ -54,32 +59,12 @@ const EditProfile = ({route, navigation}) => {
         saveToPhotos: true,
       },
       res => {
-        console.log(res);
+        //console.log(res);
+        setImage(res);
       },
     );
   };
 
-  const handleUploadPhoto = () => {
-    setIsLoading(true);
-    axios
-      .patch(
-        `http://10.0.2.2:8000/userImage/${USER_ID}`,
-        createFormData(image),
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
-      )
-      .then(response => {
-        console.log('response', response.data);
-        dispatch(getUserProfile(USER_ID)); //dispatch getProfile Action to update the store with the new image
-      })
-      .catch(error => {
-        console.log('error', error.message);
-      });
-    setIsLoading(false);
-  };
   //function to handle opening the phone's library
   const choosePhotoFromLibrary = () => {
     launchImageLibrary(
@@ -90,10 +75,46 @@ const EditProfile = ({route, navigation}) => {
       },
       res => {
         setImage(res);
-        console.log(res);
-        handleUploadPhoto();
+
+        //console.log('uploaded Image', res);
       },
     );
+  };
+  //this function allows us to update the profile
+  const handleUploadPhoto = () => {
+    setIsLoading(true);
+    //check if the image changed or no
+    if (image.fileName) {
+      axios
+        .patch(
+          `http://10.0.2.2:8000/userImage/${USER_ID}`,
+          createFormData(image),
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        )
+        .then(response => {
+          console.log('response', response.data);
+          dispatch(getUserProfile(USER_ID)); //dispatch getProfile Action to update the store with the new image
+          Alert.alert('Succes', 'contenue modifié avec succés');
+        })
+        .catch(error => {
+          console.log('error', error.message);
+        });
+      setIsLoading(false);
+    }
+  };
+  const handleUserInfoChange = () => {
+    api
+      .patch(`/user/${USER_ID}`, userInfo)
+      .then(response => {
+        dispatch(getUserProfile(USER_ID));
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
   // a function to show the  sliding modal
   const renderContent = () => (
@@ -141,12 +162,16 @@ const EditProfile = ({route, navigation}) => {
           <Text style={styles.cancel}>Cancel</Text>
         </TouchableOpacity>
         <Text style={styles.editProfile}>Edit Profile</Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            handleUploadPhoto();
+            handleUserInfoChange();
+          }}>
           <Text style={styles.done}>Done</Text>
         </TouchableOpacity>
       </View>
       <View>
-        <Image style={styles.profileImage} source={{uri: ProfileImage}} />
+        <Image style={styles.profileImage} source={{uri: image.uri}} />
         <TouchableOpacity
           style={styles.changeImage}
           onPress={() => sheetRef.current.snapTo(0)}>
@@ -156,23 +181,53 @@ const EditProfile = ({route, navigation}) => {
       <Text style={{fontSize: 15, color: 'white', marginLeft: 15}}>
         Informations Generales :{' '}
       </Text>
-      <Input title="Pseudo" value="AuckFmine" />
+      <Input
+        title="Pseudo"
+        value={userInfo.userName}
+        onChange={e => {
+          setUserInfo({...userInfo, userName: e});
+        }}
+      />
       <Divider style={{backgroundColor: 'black'}} />
-      <Input title="Nom" value="Rouatbi" />
+      <Input
+        title="Nom"
+        value={userInfo.firstName}
+        onChange={e => {
+          setUserInfo({...userInfo, firstName: e});
+        }}
+      />
       <Divider style={{backgroundColor: 'black'}} />
-      <Input title="Prenom" value="Mouhamed Amine " />
+      <Input
+        title="Prenom"
+        value={userInfo.lastName}
+        onChange={e => {
+          setUserInfo({...userInfo, lastName: e});
+        }}
+      />
       <Divider style={{backgroundColor: 'black'}} />
-      <Input title="Bio" value="ingenieur logiciel chez off agency" />
+      <Input
+        title="Bio"
+        value={userInfo.bio}
+        onChange={e => {
+          setUserInfo({...userInfo, bio: e});
+        }}
+      />
       <Divider style={{backgroundColor: 'black'}} />
       <Text
         style={{fontSize: 15, color: 'white', marginLeft: 15, marginTop: 10}}>
         Informations Privées :{' '}
       </Text>
-      <Input title="E-mail" value="mouhamedaminerouatbi@gmail.com" />
+      <Input
+        title="E-mail"
+        value={userInfo.email}
+        onChange={e => {
+          setUserInfo({...userInfo, email: e});
+        }}
+      />
       <Divider style={{backgroundColor: 'black'}} />
-      <Input title="Num TLF" value="+21625892319" />
+      <Input title="Num TLF" value={userInfo.phone} />
       <Divider style={{backgroundColor: 'black'}} />
-      <Input title="Sexe" value="Male" />
+      <Input title="Sexe" value={userInfo.sexe ? userInfo.sexe : 'no data'} />
       <Divider style={{backgroundColor: 'black'}} />
     </ScrollView>
   );

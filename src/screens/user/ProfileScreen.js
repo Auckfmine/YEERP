@@ -25,18 +25,16 @@ const ProfileScreen = ({navigation}) => {
   const [userr, setUser] = useState('');
   const {user} = useSelector(state => state.user);
   console.log(user.photo);
+  const getUser = async () => {
+    try {
+      const response = await axios.get(`http://10.0.2.2:8000/user/${user._id}`);
+      setUser(response.data.user);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const response = await axios.get(
-          `http://10.0.2.2:8000/user/${user._id}`,
-        );
-        console.log(response.data.user);
-        setUser(response.data.user);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     getUser();
   }, []);
 
@@ -64,14 +62,18 @@ const ProfileScreen = ({navigation}) => {
               left: '50%',
               justifyContent: 'space-between',
             }}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+              }}>
               <Text style={styles.userInfoText}>Postes</Text>
               <Text style={styles.userInfoText}>Folowers</Text>
               <Text style={styles.userInfoText}>Folowing</Text>
             </View>
 
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+              style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
               <Text style={styles.userInfoText}>{user.folowers}</Text>
               <Text style={styles.userInfoText}>{user.folowing}</Text>
               <Text style={styles.userInfoText}>{user.posts}</Text>
@@ -81,7 +83,7 @@ const ProfileScreen = ({navigation}) => {
         <View style={styles.bioContainer}>
           <Text style={styles.UserName}>@{user.userName}</Text>
           <Text style={styles.UserName}>
-            Digital goodies designer @pixsellz Everything is designed.
+            {user.bio ? user.bio : 'pas de bio '}
           </Text>
         </View>
         <View style={styles.editProfile}>
@@ -185,6 +187,7 @@ const styles = StyleSheet.create({
   },
   userInfoText: {
     color: '#F9F9F9',
+    paddingRight: 15,
   },
   UserName: {
     color: '#F9F9F9',

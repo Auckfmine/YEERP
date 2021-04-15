@@ -2,14 +2,15 @@
 import React from 'react';
 import {StyleSheet, Text, View, TextInput} from 'react-native';
 
-const Input = ({title, value}) => {
+const Input = ({title, value, onChange}) => {
   return (
     <View style={styles.userInfo}>
       <Text style={styles.pseudo}>{title}</Text>
       <TextInput
         style={styles.centerTextInput}
-        placeholder={value}
+        value={value}
         placeholderTextColor="white"
+        onChangeText={onChange}
       />
     </View>
   );

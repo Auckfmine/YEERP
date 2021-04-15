@@ -44,9 +44,9 @@ const App = ({navigation}) => {
           <SafeAreaProvider>
             <NavigationContainer>
               <stack.Navigator headerMode={false}>
-                <stack.Screen name="Profile2" component={Core} />
                 <stack.Screen name="Splash" component={splashScreen} />
                 <stack.Screen name="Login" component={LoginScreen} />
+                <stack.Screen name="Profile2" component={Core} />
                 <stack.Screen name="Register" component={RegisterScreen} />
                 <stack.Screen name="Forget1" component={Forget1} />
                 <stack.Screen name="Forget2" component={Forget2} />

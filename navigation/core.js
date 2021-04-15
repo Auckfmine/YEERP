@@ -24,6 +24,28 @@ export default function CoreRoutes() {
       <Tab.Screen
         options={{
           tabBarIcon: ({color, size}) => (
+            <Image
+              source={{
+                uri:
+                  'https://images.unsplash.com/photo-1594270410221-e6a33cbc6fb9?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MzV8fGh1bWFufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+              }}
+              color={color}
+              style={{
+                width: size,
+                height: size,
+                borderRadius: 100,
+                borderWidth: 1,
+                borderColor: 'white',
+              }}
+            />
+          ),
+        }}
+        name="Profiles"
+        component={Profile}
+      />
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({color, size}) => (
             <Icon name="ios-home-outline" color={color} size={size} />
           ),
         }}
@@ -58,28 +80,6 @@ export default function CoreRoutes() {
         }}
         name="Search"
         component={Search}
-      />
-      <Tab.Screen
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <Image
-              source={{
-                uri:
-                  'https://images.unsplash.com/photo-1594270410221-e6a33cbc6fb9?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MzV8fGh1bWFufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-              }}
-              color={color}
-              style={{
-                width: size,
-                height: size,
-                borderRadius: 100,
-                borderWidth: 1,
-                borderColor: 'white',
-              }}
-            />
-          ),
-        }}
-        name="Profiles"
-        component={Profile}
       />
     </Tab.Navigator>
   );

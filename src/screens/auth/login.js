@@ -44,6 +44,7 @@ import {
   internetConnected,
   internetDisconnected,
 } from '../../../redux/internetConnection/internet';
+import {getUserPhotos} from '../../../redux/user/imagesAction';
 //Screen
 
 const Login = ({navigation}) => {
@@ -119,10 +120,11 @@ const Login = ({navigation}) => {
       });
 
       if (response.data.auth === true) {
+        dispatch(getUserProfile(response.data.user._id));
+        dispatch(getUserPhotos(response.data.user._id));
         dispatch(loginSuccess());
 
-        dispatch(getUserProfile(response.data.user._id));
-        return navigation.navigate('Profile');
+        return navigation.navigate('Profile2');
       }
 
       dispatch(loginFail(response.data.msg));

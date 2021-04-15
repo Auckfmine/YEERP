@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {getUserFailed, getUserPending, getUserSuccess} from './user';
 import {fetchUser} from '../../api/user/fetchUser';
 export const getUserProfile = id => async dispatch => {

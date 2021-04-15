@@ -17,26 +17,21 @@ import Music from '../user/userMusic';
 import Posts from '../user/userPosts';
 import Videos from '../user/userVideos';
 import axios from 'axios';
+import {useSelector} from 'react-redux';
+
 const Tab = createMaterialTopTabNavigator();
-const User = {
-  role: 0,
-  _id: '605cb57eb7d46e3dd8b91b4f',
-  userName: 'Auckfmine',
-  email: 'mouhamedaminerouatbi@gmail.com',
-  password: '$2b$10$Ixi5MaIoGHoI8VKHkr8d9euuhfhsghZuBXOROGaBUm9TMd.uY5SLS',
-  __v: 0,
-  secretNum: 7379,
-  photo: 'http://10.0.0.1:8000/uploads\\images\\image-1618397182003.png',
-};
 
 const ProfileScreen = ({navigation}) => {
-  const [user, setUser] = useState('');
+  const [userr, setUser] = useState('');
+  const {user} = useSelector(state => state.user);
+  console.log(user.photo);
   useEffect(() => {
     const getUser = async () => {
       try {
         const response = await axios.get(
-          'https://yeerp-back-end.herokuapp.com/user/605cb57eb7d46e3dd8b91b4f',
+          `http://10.0.2.2:8000/user/${user._id}`,
         );
+        console.log(response.data.user);
         setUser(response.data.user);
       } catch (error) {
         console.log(error);
@@ -60,15 +55,31 @@ const ProfileScreen = ({navigation}) => {
           <Image
             style={styles.ProfileImage}
             source={{
-              uri: User.photo,
+              uri: user.photo,
             }}
           />
-          <Text style={styles.userInfoText}>Postes</Text>
-          <Text style={styles.userInfoText}>Folowers</Text>
-          <Text style={styles.userInfoText}>Folowing</Text>
+          <View
+            style={{
+              position: 'absolute',
+              left: '50%',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={styles.userInfoText}>Postes</Text>
+              <Text style={styles.userInfoText}>Folowers</Text>
+              <Text style={styles.userInfoText}>Folowing</Text>
+            </View>
+
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+              <Text style={styles.userInfoText}>{user.folowers}</Text>
+              <Text style={styles.userInfoText}>{user.folowing}</Text>
+              <Text style={styles.userInfoText}>{user.posts}</Text>
+            </View>
+          </View>
         </View>
         <View style={styles.bioContainer}>
-          <Text style={styles.UserName}>@User_Name</Text>
+          <Text style={styles.UserName}>@{user.userName}</Text>
           <Text style={styles.UserName}>
             Digital goodies designer @pixsellz Everything is designed.
           </Text>
@@ -78,7 +89,7 @@ const ProfileScreen = ({navigation}) => {
             style={styles.editProfileBtn}
             onPress={() => {
               navigation.navigate('EditProfile', {
-                logo: User.photo,
+                logo: user.photo,
               });
             }}>
             <Text
@@ -169,7 +180,7 @@ const styles = StyleSheet.create({
   },
   UserInfo: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+
     alignItems: 'center',
   },
   userInfoText: {

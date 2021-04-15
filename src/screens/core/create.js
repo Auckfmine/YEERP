@@ -4,9 +4,10 @@ import React, {useState} from 'react';
 import axios from 'axios';
 import {View, Image, Button, Platform} from 'react-native';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-
+import {useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
+import {getUserPhotos} from '../../../redux/user/imagesAction';
 const SERVER_URL = 'http://localhost:8000';
-const USER_ID = '605911e7452cd506f053c3db';
 
 const createFormData = (photo, body = {}) => {
   const data = new FormData();
@@ -27,6 +28,8 @@ const createFormData = (photo, body = {}) => {
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [photo, setPhoto] = React.useState(null);
+  const USER_ID = useSelector(state => state.user.user._id);
+  const dispatch = useDispatch();
 
   //this function allows us to chose a photo from the library
   const handleChoosePhoto = () => {
@@ -53,17 +56,15 @@ const App = () => {
   const handleUploadPhoto = () => {
     setIsLoading(true);
     axios
-      .post(
-        `http://yeerp-back-end.herokuapp.com/upload/${USER_ID}`,
-        createFormData(photo),
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      .post(`http://10.0.2.2:8000/upload/${USER_ID}`, createFormData(photo), {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-      )
+      })
       .then(response => {
         console.log('response', response.data);
+        dispatch(getUserPhotos(USER_ID));
+        alert('photo uploaded with success');
       })
       .catch(error => {
         console.log('error', error.message);

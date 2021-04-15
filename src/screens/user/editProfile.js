@@ -15,27 +15,34 @@ import {Divider} from 'react-native-elements';
 import BottomSheet from 'reanimated-bottom-sheet';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
-const USER_ID = '605911e7452cd506f053c3db';
+import {useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
+import {getUserProfile} from '../../../redux/user/userAction';
+
+const createFormData = (photo, body = {}) => {
+  const data = new FormData();
+
+  data.append('file', {
+    name: photo.fileName,
+    type: photo.type,
+    uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+  });
+
+  Object.keys(body).forEach(key => {
+    data.append(key, body[key]);
+  });
+
+  return data;
+};
+
 const EditProfile = ({route, navigation}) => {
   const [image, setImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const sheetRef = React.createRef();
-  const {logo} = route.params;
-  const createFormData = (photo, body = {}) => {
-    const data = new FormData();
+  const ProfileImage = useSelector(state => state.user.user.photo);
+  const dispatch = useDispatch();
+  const USER_ID = useSelector(state => state.user.user._id);
 
-    data.append('file', {
-      name: photo.fileName,
-      type: photo.type,
-      uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
-    });
-
-    Object.keys(body).forEach(key => {
-      data.append(key, body[key]);
-    });
-
-    return data;
-  };
   //a function to handle opening the camera
   const takePhotoFromCamera = () => {
     launchCamera(
@@ -50,6 +57,28 @@ const EditProfile = ({route, navigation}) => {
         console.log(res);
       },
     );
+  };
+
+  const handleUploadPhoto = () => {
+    setIsLoading(true);
+    axios
+      .patch(
+        `http://10.0.2.2:8000/userImage/${USER_ID}`,
+        createFormData(image),
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
+      .then(response => {
+        console.log('response', response.data);
+        dispatch(getUserProfile(USER_ID)); //dispatch getProfile Action to update the store with the new image
+      })
+      .catch(error => {
+        console.log('error', error.message);
+      });
+    setIsLoading(false);
   };
   //function to handle opening the phone's library
   const choosePhotoFromLibrary = () => {
@@ -66,27 +95,6 @@ const EditProfile = ({route, navigation}) => {
       },
     );
   };
-  const handleUploadPhoto = () => {
-    setIsLoading(true);
-    axios
-      .post(
-        `http://yeerp-back-end.herokuapp.com/upload/${USER_ID}`,
-        createFormData(image),
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
-      )
-      .then(response => {
-        console.log('response', response.data);
-      })
-      .catch(error => {
-        console.log('error', error.message);
-      });
-    setIsLoading(false);
-  };
-
   // a function to show the  sliding modal
   const renderContent = () => (
     <View style={styles.panel}>
@@ -138,7 +146,7 @@ const EditProfile = ({route, navigation}) => {
         </TouchableOpacity>
       </View>
       <View>
-        <Image style={styles.profileImage} source={{uri: logo}} />
+        <Image style={styles.profileImage} source={{uri: ProfileImage}} />
         <TouchableOpacity
           style={styles.changeImage}
           onPress={() => sheetRef.current.snapTo(0)}>

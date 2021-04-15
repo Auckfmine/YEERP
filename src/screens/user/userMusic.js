@@ -10,29 +10,23 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSelector} from 'react-redux';
 import api from '../../../api/apiCall';
-
+import {useDispatch} from 'react-redux';
+import {getUserPhotos} from '../../../redux/user/imagesAction';
 const screenSize = Dimensions.get('window').width;
 const tile = screenSize / 2;
-const userId = '605911e7452cd506f053c3db'; //user id need to get imported from redux state
+//user id need to get imported from redux state
 
 const UserMusic = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
+  const userId = useSelector(state => state.user.user._id); //gets the userId Stored in redux
+  const photos = useSelector(state => state.userPhotos.photos);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    //get the images for the specific user from the backend
-    const getData = async () => {
-      setIsLoading(true);
-
-      const response = await api.get(`/user/${userId}/images`);
-      //console.log(response.data.photos);
-      setData(response.data.photos);
-      setIsLoading(false);
-    };
-    getData();
-  }, []);
   const renderItem = ({item}) => {
+    console.log(item.url);
     return (
       <TouchableOpacity
         onPress={() => {
@@ -51,7 +45,7 @@ const UserMusic = ({navigation}) => {
         <FlatList
           numColumns={2}
           keyExtractor={item => item._id}
-          data={data}
+          data={photos}
           renderItem={renderItem}
         />
       )}

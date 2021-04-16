@@ -40,6 +40,8 @@ const createFormData = (photo, body = {}) => {
 };
 
 const EditProfile = ({route, navigation}) => {
+  const USER_ID = useSelector(state => state.user.user._id) || route.params.id;
+
   const userData = useSelector(state => state.user.user);
   const [image, setImage] = useState({uri: route.params.logo});
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +49,13 @@ const EditProfile = ({route, navigation}) => {
   const sheetRef = React.createRef();
 
   const dispatch = useDispatch();
-  const USER_ID = useSelector(state => state.user.user._id) || route.params.id;
+
+  const getLocalData = async () => {
+    const data = await AsyncStorage.getItem('user');
+    const user = JSON.parse(data).user._id;
+    //get the user Id either from localstorage if it is saved or  from redux after logging in
+    setUserInfo({...userInfo, _id: !USER_ID ? user : USER_ID});
+  };
 
   const handleLogOut = async () => {
     try {
@@ -59,10 +67,11 @@ const EditProfile = ({route, navigation}) => {
 
     console.log('Done.');
   };
-
   useEffect(() => {
-    dispatch(getUserProfile(USER_ID));
-  }, []);
+    getLocalData();
+    dispatch(getUserProfile(userInfo._id));
+  }, [userInfo._id]);
+
   //a function to handle opening the camera
   const takePhotoFromCamera = () => {
     launchCamera(

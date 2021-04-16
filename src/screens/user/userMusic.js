@@ -14,6 +14,7 @@ import {useSelector} from 'react-redux';
 import api from '../../../api/apiCall';
 import {useDispatch} from 'react-redux';
 import {getUserPhotos} from '../../../redux/user/imagesAction';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const screenSize = Dimensions.get('window').width;
 const tile = screenSize / 2;
 //user id need to get imported from redux state
@@ -25,8 +26,17 @@ const UserMusic = ({navigation}) => {
   const photos = useSelector(state => state.userPhotos.photos);
   const dispatch = useDispatch();
 
+  const getLocalData = async () => {
+    const StringUser = await AsyncStorage.getItem('user');
+    const user = JSON.parse(StringUser);
+
+    dispatch(getUserPhotos(user.user._id));
+  };
+  useEffect(() => {
+    getLocalData();
+  }, []);
+
   const renderItem = ({item}) => {
-    console.log(item.url);
     return (
       <TouchableOpacity
         onPress={() => {

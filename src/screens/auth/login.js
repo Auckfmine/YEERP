@@ -126,7 +126,10 @@ const Login = ({navigation}) => {
         dispatch(loginSuccess());
         await AsyncStorage.setItem('user', JSON.stringify(response.data));
 
-        return navigation.navigate('Profile2');
+        return navigation.navigate('Profile2', {
+          screen: 'Profiles',
+          params: {local: response.data},
+        });
       }
 
       dispatch(loginFail(response.data.msg));

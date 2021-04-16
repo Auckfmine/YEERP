@@ -17,8 +17,9 @@ import Music from '../user/userMusic';
 import Posts from '../user/userPosts';
 import Videos from '../user/userVideos';
 import axios from 'axios';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native-paper';
+import {getUserPhotos} from '../../../redux/user/imagesAction';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -26,8 +27,9 @@ const ProfileScreen = ({route, navigation}) => {
   const [userr, setUser] = useState('');
   const {user} = useSelector(state => state.user);
   const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
 
-  const {local} = route.params;
+  const {local} = route.params || '';
   //get user details withour redux
   const getUser = async () => {
     try {
@@ -46,9 +48,10 @@ const ProfileScreen = ({route, navigation}) => {
   };
   //get the data from the api if there is no state stored in redux
   useEffect(() => {
+    dispatch(getUserPhotos(local.user._id));
     if (!user.email) return getUser();
   }, [local]);
-  console.log(isLoading);
+  //console.log(isLoading);
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#121212" />
@@ -58,7 +61,7 @@ const ProfileScreen = ({route, navigation}) => {
         <View style={styles.topHalf}>
           <View style={styles.topBar}>
             <Text style={styles.text}>Profile</Text>
-            <TouchableOpacity style={styles.homeIcon}>
+            <TouchableOpacity style={styles.homeIcon} onPress={() => {}}>
               <Icon style={{color: '#F9F9F9'}} size={30} name="menu" />
             </TouchableOpacity>
           </View>
@@ -113,7 +116,7 @@ const ProfileScreen = ({route, navigation}) => {
               style={styles.editProfileBtn}
               onPress={() => {
                 navigation.navigate('EditProfile', {
-                  logo: user.photo,
+                  logo: !user.photo ? userr.photo : user.photo,
                   id: local.user._id,
                 });
               }}>

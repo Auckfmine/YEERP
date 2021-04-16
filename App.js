@@ -2,7 +2,7 @@
 import 'react-native-gesture-handler';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, StackActions} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NetworkProvider} from 'react-native-offline';
 import {LanguageProvider} from 'react-native-translation';
@@ -28,6 +28,7 @@ const stack = createStackNavigator();
 import {Provider} from 'react-redux';
 import store from './store';
 import Login from './src/screens/auth/login';
+import Menu from './navigation/menuDrawer';
 
 const App = ({navigation}) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -56,6 +57,7 @@ const App = ({navigation}) => {
                 <stack.Screen name="Video" component={videoPlayer} />
                 <stack.Screen name="MusicPlayer" component={MusicPlayer} />
                 <stack.Screen name="EditProfile" component={EditProfile} />
+                <stack.Screen name="Menu" component={Menu} />
               </stack.Navigator>
             </NavigationContainer>
           </SafeAreaProvider>

@@ -21,6 +21,7 @@ import {useDispatch} from 'react-redux';
 import {getUserProfile} from '../../../redux/user/userAction';
 import api from '../../../api/apiCall';
 import {onChange} from 'react-native-reanimated';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const createFormData = (photo, body = {}) => {
   const data = new FormData();
@@ -46,8 +47,22 @@ const EditProfile = ({route, navigation}) => {
   const sheetRef = React.createRef();
 
   const dispatch = useDispatch();
-  const USER_ID = useSelector(state => state.user.user._id);
+  const USER_ID = useSelector(state => state.user.user._id) || route.params.id;
 
+  const handleLogOut = async () => {
+    try {
+      await AsyncStorage.removeItem('user');
+      return navigation.navigate('Login');
+    } catch (e) {
+      // remove error
+    }
+
+    console.log('Done.');
+  };
+
+  useEffect(() => {
+    dispatch(getUserProfile(USER_ID));
+  }, []);
   //a function to handle opening the camera
   const takePhotoFromCamera = () => {
     launchCamera(
@@ -176,6 +191,11 @@ const EditProfile = ({route, navigation}) => {
           style={styles.changeImage}
           onPress={() => sheetRef.current.snapTo(0)}>
           <Text style={{color: '#3897F0'}}>Change Profile Photo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.changeImage}
+          onPress={() => handleLogOut()}>
+          <Text style={{color: '#3897F0'}}>Logout</Text>
         </TouchableOpacity>
       </View>
       <Text style={{fontSize: 15, color: 'white', marginLeft: 15}}>

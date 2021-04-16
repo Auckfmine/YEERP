@@ -45,6 +45,7 @@ import {
   internetDisconnected,
 } from '../../../redux/internetConnection/internet';
 import {getUserPhotos} from '../../../redux/user/imagesAction';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 //Screen
 
 const Login = ({navigation}) => {
@@ -123,6 +124,7 @@ const Login = ({navigation}) => {
         dispatch(getUserProfile(response.data.user._id));
         dispatch(getUserPhotos(response.data.user._id));
         dispatch(loginSuccess());
+        await AsyncStorage.setItem('user', JSON.stringify(response.data));
 
         return navigation.navigate('Profile2');
       }

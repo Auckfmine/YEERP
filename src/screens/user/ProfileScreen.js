@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import Music from '../user/userMusic';
@@ -18,93 +18,117 @@ import Posts from '../user/userPosts';
 import Videos from '../user/userVideos';
 import axios from 'axios';
 import {useSelector} from 'react-redux';
+import {ActivityIndicator} from 'react-native-paper';
 
 const Tab = createMaterialTopTabNavigator();
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({route, navigation}) => {
   const [userr, setUser] = useState('');
   const {user} = useSelector(state => state.user);
-  console.log(user.photo);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const {local} = route.params;
+  //get user details withour redux
   const getUser = async () => {
     try {
-      const response = await axios.get(`http://10.0.2.2:8000/user/${user._id}`);
-      setUser(response.data.user);
+      const response = await axios.get(
+        `http://10.0.2.2:8000/user/${local.user._id}`,
+      );
+      console.log(response.data);
+      if (response.data) {
+        console.log('before adding data to state', userr);
+        setUser(response.data.user);
+        setIsLoading(false);
+      }
     } catch (error) {
       console.log(error);
     }
   };
-
+  //get the data from the api if there is no state stored in redux
   useEffect(() => {
-    getUser();
-  }, []);
-
+    if (!user.email) return getUser();
+  }, [local]);
+  console.log(isLoading);
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#121212" />
-      <View style={styles.topHalf}>
-        <View style={styles.topBar}>
-          <Text style={styles.text}>Profile</Text>
-          <TouchableOpacity style={styles.homeIcon}>
-            <Icon style={{color: '#F9F9F9'}} size={30} name="menu" />
-          </TouchableOpacity>
-        </View>
+      {isLoading ? (
+        <ActivityIndicator color="black" />
+      ) : (
+        <View style={styles.topHalf}>
+          <View style={styles.topBar}>
+            <Text style={styles.text}>Profile</Text>
+            <TouchableOpacity style={styles.homeIcon}>
+              <Icon style={{color: '#F9F9F9'}} size={30} name="menu" />
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.UserInfo}>
-          <Image
-            style={styles.ProfileImage}
-            source={{
-              uri: user.photo,
-            }}
-          />
-          <View
-            style={{
-              position: 'absolute',
-              left: '50%',
-              justifyContent: 'space-between',
-            }}>
+          <View style={styles.UserInfo}>
+            <Image
+              style={styles.ProfileImage}
+              source={{
+                uri: !user.photo ? userr.photo : user.photo,
+              }}
+            />
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
+                position: 'absolute',
+                left: '50%',
+                justifyContent: 'space-between',
               }}>
-              <Text style={styles.userInfoText}>Postes</Text>
-              <Text style={styles.userInfoText}>Folowers</Text>
-              <Text style={styles.userInfoText}>Folowing</Text>
-            </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly',
+                }}>
+                <Text style={styles.userInfoText}>Postes</Text>
+                <Text style={styles.userInfoText}>Folowers</Text>
+                <Text style={styles.userInfoText}>Folowing</Text>
+              </View>
 
-            <View
-              style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-              <Text style={styles.userInfoText}>{user.folowers}</Text>
-              <Text style={styles.userInfoText}>{user.folowing}</Text>
-              <Text style={styles.userInfoText}>{user.posts}</Text>
+              <View
+                style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+                <Text style={styles.userInfoText}>
+                  {!user.folowers ? userr.folowers : user.folowers}
+                </Text>
+                <Text style={styles.userInfoText}>
+                  {!user.folowing ? userr.folowing : user.folowing}
+                </Text>
+                <Text style={styles.userInfoText}>
+                  {!user.posts ? userr.posts : user.posts}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
-        <View style={styles.bioContainer}>
-          <Text style={styles.UserName}>@{user.userName}</Text>
-          <Text style={styles.UserName}>
-            {user.bio ? user.bio : 'pas de bio '}
-          </Text>
-        </View>
-        <View style={styles.editProfile}>
-          <TouchableOpacity
-            style={styles.editProfileBtn}
-            onPress={() => {
-              navigation.navigate('EditProfile', {
-                logo: user.photo,
-              });
-            }}>
-            <Text
-              style={{
-                color: 'white',
-                marginHorizontal: '30%',
-                marginVertical: 5,
-              }}>
-              edit profile
+          <View style={styles.bioContainer}>
+            <Text style={styles.UserName}>
+              @{!user.userName ? userr.userName : user.userName}
             </Text>
-          </TouchableOpacity>
+            <Text style={styles.UserName}>
+              {!user.bio ? userr.bio : user.bio}
+            </Text>
+          </View>
+          <View style={styles.editProfile}>
+            <TouchableOpacity
+              style={styles.editProfileBtn}
+              onPress={() => {
+                navigation.navigate('EditProfile', {
+                  logo: user.photo,
+                  id: local.user._id,
+                });
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  marginHorizontal: '30%',
+                  marginVertical: 5,
+                }}>
+                edit profile
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
 
       <View style={styles.bottomHalf}>
         <Tab.Navigator

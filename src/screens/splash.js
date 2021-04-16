@@ -1,19 +1,44 @@
+/* eslint-disable prettier/prettier */
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, Image} from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
 import * as Animatable from 'react-native-animatable';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NetworkConsumer, useIsConnected} from 'react-native-offline';
 const CostumProgressBar = Animatable.createAnimatableComponent(ProgressBar);
 const Splash = ({navigation}) => {
   const [progress, setProgress] = useState(0);
+  const [localData, setLocalData] = useState(null);
   const isConnected = useIsConnected();
 
   useEffect(() => {
     animate();
   }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const value = await AsyncStorage.getItem('user');
+        if (value !== null) {
+          console.log('sotred user', value);
+          return setLocalData(value);
+        }
+      } catch (e) {
+        // error reading value
+      }
+    };
+    getData();
+  }, []);
   useEffect(() => {
     if (progress === 1) {
+      if (localData) {
+        const local = JSON.parse(localData);
+        return navigation.navigate('Profile2', {
+          screen: 'Profiles',
+          params: {local},
+        });
+      }
       navigation.navigate('Login');
     }
   });

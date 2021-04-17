@@ -153,17 +153,17 @@ const Login = ({navigation}) => {
         textContent={'Chargement...'}
         textStyle={styles.spinnerTextStyle}
       />
-      <Image
-        resizeMode="cover"
-        style={styles.upperPart}
-        source={require('../../assets/images/Union.png')}
-      />
-      <Image
-        style={styles.logo}
-        source={require('../../assets/images/logo-3.png')}
-      />
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Image
+          style={styles.logo}
+          source={require('../../assets/images/logo-3.png')}
+        />
+      </View>
+
       <View style={styles.inputContainer}>
         <Input
+          inputStyle={{color: 'white'}}
+          placeholderTextColor="white"
           value={email.value}
           onChangeText={text => {
             setEmail({value: text});
@@ -174,6 +174,8 @@ const Login = ({navigation}) => {
           errorMessage={!email.reduxError ? email.err : email.reduxError}
         />
         <Input
+          inputStyle={{color: 'white'}}
+          placeholderTextColor="white"
           onChangeText={text => {
             setPassword({value: text});
           }}
@@ -220,7 +222,7 @@ const Login = ({navigation}) => {
       <View style={styles.inscriptionContainer}>
         <Text
           style={{
-            color: '#000000',
+            color: 'white',
             fontSize: 14,
             lineHeight: 18,
             fontFamily: 'Poppins-Medium',
@@ -251,7 +253,7 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#121212',
     height: hp('80%'),
   },
 
@@ -260,10 +262,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   logo: {
-    position: 'absolute',
-    height: hp('40%'),
-    width: wp('45%'),
-    left: wp('30%'),
+    height: 250,
+    width: 250,
   },
   inputContainer: {
     marginHorizontal: wp('5%'),

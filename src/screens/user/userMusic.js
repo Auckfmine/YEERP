@@ -15,17 +15,17 @@ import api from '../../../api/apiCall';
 import {useDispatch} from 'react-redux';
 import {getUserPhotos} from '../../../redux/user/imagesAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {set} from 'react-native-reanimated';
 const screenSize = Dimensions.get('window').width;
-const tile = screenSize / 2;
+const tile = screenSize / 3;
 //user id need to get imported from redux state
 
 const UserMusic = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState([]);
-  const userId = useSelector(state => state.user.user._id); //gets the userId Stored in redux
   const photos = useSelector(state => state.userPhotos.photos);
   const dispatch = useDispatch();
 
+  //get the stored user from localstorage and grab all his images to show them in the profile
   const getLocalData = async () => {
     const StringUser = await AsyncStorage.getItem('user');
     const user = JSON.parse(StringUser);
@@ -33,7 +33,9 @@ const UserMusic = ({navigation}) => {
     dispatch(getUserPhotos(user.user._id));
   };
   useEffect(() => {
+    setIsLoading(true);
     getLocalData();
+    setIsLoading(false);
   }, []);
 
   const renderItem = ({item}) => {
@@ -50,10 +52,10 @@ const UserMusic = ({navigation}) => {
   return (
     <View style={styles.container}>
       {isLoading ? (
-        <ActivityIndicator style={styles.loader} color="white" />
+        <ActivityIndicator style={styles.loader} color="white" size="large" />
       ) : (
         <FlatList
-          numColumns={2}
+          numColumns={3}
           keyExtractor={item => item._id}
           data={photos}
           renderItem={renderItem}
@@ -75,8 +77,6 @@ const styles = StyleSheet.create({
   },
   image: {height: tile, width: tile, marginLeft: 2, marginTop: 2},
   loader: {
-    position: 'absolute',
-    left: '45%',
-    top: '45%',
+    flex: 1,
   },
 });

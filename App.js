@@ -14,7 +14,6 @@ import Forget1 from './src/screens/auth/forgetPasswordStep1';
 import Forget2 from './src/screens/auth/forgetPasswordStep2';
 import Forget3 from './src/screens/auth/forgetPasswordStep3';
 import splashScreen from './src/screens/splash';
-import Profile from './src/screens/user/profile';
 import ProfileScreen from './src/screens/user/ProfileScreen';
 import EditProfile from './src/screens/user/editProfile';
 import Core from './navigation/core';
@@ -52,7 +51,7 @@ const App = ({navigation}) => {
                 <stack.Screen name="Forget1" component={Forget1} />
                 <stack.Screen name="Forget2" component={Forget2} />
                 <stack.Screen name="Forget3" component={Forget3} />
-                <stack.Screen name="Profile" component={Profile} />
+
                 <stack.Screen name="Viewer" component={ImageViewer} />
                 <stack.Screen name="Video" component={videoPlayer} />
                 <stack.Screen name="MusicPlayer" component={MusicPlayer} />

@@ -20,6 +20,7 @@ import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native-paper';
 import {getUserPhotos} from '../../../redux/user/imagesAction';
+import {getUserProfile} from '../../../redux/user/userAction';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -30,8 +31,8 @@ const ProfileScreen = ({route, navigation}) => {
   const dispatch = useDispatch();
 
   const {local} = route.params || '';
-  //get user details withour redux
-  const getUser = async () => {
+  //get user details without redux
+  /*const getUser = async () => {
     try {
       const response = await axios.get(
         `http://10.0.2.2:8000/user/${local.user._id}`,
@@ -45,13 +46,18 @@ const ProfileScreen = ({route, navigation}) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  };*/
   //get the data from the api if there is no state stored in redux
   useEffect(() => {
+    setIsLoading(true);
+    dispatch(getUserProfile(local.user._id));
     dispatch(getUserPhotos(local.user._id));
-    if (!user.email) return getUser();
-  }, [local]);
+    setIsLoading(false);
+
+    //if (!user.email) return getUser();
+  }, []);
   //console.log(isLoading);
+  //console.log(user);
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#121212" />
@@ -70,13 +76,16 @@ const ProfileScreen = ({route, navigation}) => {
             <Image
               style={styles.ProfileImage}
               source={{
-                uri: !user.photo ? userr.photo : user.photo,
+                uri: !user.photo
+                  ? 'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png'
+                  : user.photo,
               }}
             />
+            <Text style={styles.UserName}>
+              @{!user.userName ? userr.userName : user.userName}
+            </Text>
             <View
               style={{
-                position: 'absolute',
-                left: '50%',
                 justifyContent: 'space-between',
               }}>
               <View
@@ -91,22 +100,13 @@ const ProfileScreen = ({route, navigation}) => {
 
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-                <Text style={styles.userInfoText}>
-                  {!user.folowers ? userr.folowers : user.folowers}
-                </Text>
-                <Text style={styles.userInfoText}>
-                  {!user.folowing ? userr.folowing : user.folowing}
-                </Text>
-                <Text style={styles.userInfoText}>
-                  {!user.posts ? userr.posts : user.posts}
-                </Text>
+                <Text style={styles.userInfoText}>{user.posts}</Text>
+                <Text style={styles.userInfoText}>{user.folowing}</Text>
+                <Text style={styles.userInfoText}>{user.folowers}</Text>
               </View>
             </View>
           </View>
           <View style={styles.bioContainer}>
-            <Text style={styles.UserName}>
-              @{!user.userName ? userr.userName : user.userName}
-            </Text>
             <Text style={styles.UserName}>
               {!user.bio ? userr.bio : user.bio}
             </Text>
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     borderColor: '#F9F9F9',
   },
   UserInfo: {
-    flexDirection: 'row',
+    //flexDirection: 'row',
 
     alignItems: 'center',
   },
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
   UserName: {
     color: '#F9F9F9',
     marginBottom: 10,
+    alignSelf: 'center',
   },
   bioContainer: {marginVertical: 10},
   editProfile: {

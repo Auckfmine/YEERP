@@ -55,6 +55,8 @@ const UserMusic = ({navigation}) => {
         <ActivityIndicator style={styles.loader} color="white" size="large" />
       ) : (
         <FlatList
+          onRefresh={getLocalData}
+          refreshing={isLoading}
           numColumns={3}
           keyExtractor={item => item._id}
           data={photos}

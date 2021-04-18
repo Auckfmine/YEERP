@@ -10,6 +10,7 @@ const CostumProgressBar = Animatable.createAnimatableComponent(ProgressBar);
 const Splash = ({navigation}) => {
   const [progress, setProgress] = useState(0);
   const [localData, setLocalData] = useState(null);
+
   const isConnected = useIsConnected();
 
   useEffect(() => {
@@ -34,9 +35,9 @@ const Splash = ({navigation}) => {
     if (progress === 1) {
       if (localData) {
         const local = JSON.parse(localData);
-        return navigation.navigate('Profile2', {
-          screen: 'Profiles',
-          params: {local},
+        return navigation.navigate('Main', {
+          screen: 'Profile2',
+          params: {screen: 'Profiles', params: {local}},
         });
       }
       navigation.navigate('Login');
@@ -56,8 +57,8 @@ const Splash = ({navigation}) => {
     }, 4000);
   };
 
-  return (
-    <View style={styles.container}>
+  /*if (!isConnected) {
+    return (
       <AwesomeAlert
         show={!isConnected}
         showProgress={false}
@@ -65,11 +66,16 @@ const Splash = ({navigation}) => {
         message="vous n'êtes pas connecté à Internet"
         closeOnTouchOutside={false}
         closeOnHardwareBackPress={false}
-        showCancelButton={false}
+        showCancelButton={true}
         cancelText="Continuer"
         confirmButtonColor="#DD6B55"
         onCancelPressed={() => {}}
       />
+    );
+  }*/
+
+  return (
+    <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Animatable.Image
           delay={1000}

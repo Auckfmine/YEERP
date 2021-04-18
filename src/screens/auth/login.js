@@ -49,6 +49,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //Screen
 
 const Login = ({navigation}) => {
+  //backButton handler
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -74,22 +75,9 @@ const Login = ({navigation}) => {
     state.checkInternet;
   });
 
-  //backButton handler
-
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    NetInfo.fetch().then(networkState => {
-      console.log(networkState.isConnected);
-      if (networkState.isConnected) {
-        return dispatch(internetConnected());
-      }
-      return dispatch(internetDisconnected());
-    });
-  }, [isConnected]);
 
   const {error, isAuth, isLoading} = useSelector(state => state.login);
-
-  //check for connection evry time the component mounts
 
   //call api and dispatch redux actions  and handle error validation
   const getData = async () => {

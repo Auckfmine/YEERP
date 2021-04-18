@@ -52,7 +52,7 @@ const EditProfile = ({route, navigation}) => {
 
   const getLocalData = async () => {
     const data = await AsyncStorage.getItem('user');
-    const user = JSON.parse(data).user._id;
+    const user = await JSON.parse(data).user._id;
     //get the user Id either from localstorage if it is saved or  from redux after logging in
     setUserInfo({...userInfo, _id: !USER_ID ? user : USER_ID});
   };

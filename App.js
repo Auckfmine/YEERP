@@ -20,6 +20,7 @@ import Core from './navigation/core';
 import ImageViewer from './src/components/imageViewer';
 import videoPlayer from './src/components/videoPlayer';
 import MusicPlayer from './src/components/musicPlayer';
+import DrawerNav from './navigation/menuDrawer';
 //navigation
 const stack = createStackNavigator();
 
@@ -46,7 +47,7 @@ const App = ({navigation}) => {
               <stack.Navigator headerMode={false}>
                 <stack.Screen name="Splash" component={splashScreen} />
                 <stack.Screen name="Login" component={LoginScreen} />
-                <stack.Screen name="Profile2" component={Core} />
+                <stack.Screen name="Main" component={DrawerNav} />
                 <stack.Screen name="Register" component={RegisterScreen} />
                 <stack.Screen name="Forget1" component={Forget1} />
                 <stack.Screen name="Forget2" component={Forget2} />
@@ -56,7 +57,6 @@ const App = ({navigation}) => {
                 <stack.Screen name="Video" component={videoPlayer} />
                 <stack.Screen name="MusicPlayer" component={MusicPlayer} />
                 <stack.Screen name="EditProfile" component={EditProfile} />
-                <stack.Screen name="Menu" component={Menu} />
               </stack.Navigator>
             </NavigationContainer>
           </SafeAreaProvider>

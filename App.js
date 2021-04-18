@@ -52,7 +52,6 @@ const App = ({navigation}) => {
                 <stack.Screen name="Forget1" component={Forget1} />
                 <stack.Screen name="Forget2" component={Forget2} />
                 <stack.Screen name="Forget3" component={Forget3} />
-
                 <stack.Screen name="Viewer" component={ImageViewer} />
                 <stack.Screen name="Video" component={videoPlayer} />
                 <stack.Screen name="MusicPlayer" component={MusicPlayer} />

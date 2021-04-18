@@ -1,11 +1,30 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import {FlatList, Image, StyleSheet, View, Dimensions} from 'react-native';
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  View,
+  Dimensions,
+  Alert,
+} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-const {music} = require('../../data/music');
+//const {music} = require('../../data/music');
 const screenSize = Dimensions.get('window').width;
 const tile = screenSize / 2;
 const UserPosts = ({navigation}) => {
+  const [music, setMusic] = useState([]);
+  const getMusic = () => {
+    axios
+      .get('http://10.0.2.2:8000/music/6077673d0b7a273524d76ba2')
+      .then(track => setMusic(track.data.tracks))
+      .catch(err => Alert.alert(err));
+  };
+  useEffect(() => {
+    getMusic();
+  }, []);
+  console.log(music);
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity

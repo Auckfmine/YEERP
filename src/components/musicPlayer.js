@@ -64,7 +64,7 @@ export default function MusicPlayer({route, navigation}) {
       console.log('Player ready');
       // add the array of songs in the playlist
       await TrackPlayer.reset();
-      await TrackPlayer.add(music);
+      await TrackPlayer.add(song);
       TrackPlayer.play();
       isPlayerReady.current = true;
 
@@ -79,29 +79,6 @@ export default function MusicPlayer({route, navigation}) {
         ],
       });
       //add listener on track change
-      TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async e => {
-        console.log('song ended', e);
-
-        const trackId = (await TrackPlayer.getCurrentTrack()) - 1; //get the current id
-
-        console.log('track id', trackId, 'index', index.current);
-
-        if (trackId !== index.current) {
-          setSongIndex(trackId);
-          isItFromUser.current = false;
-
-          if (trackId > index.current) {
-            goNext();
-          } else {
-            goPrv();
-          }
-          setTimeout(() => {
-            isItFromUser.current = true;
-          }, 200);
-        }
-
-        // isPlayerReady.current = true;
-      });
 
       //monitor intterupt when other apps start playing music
       TrackPlayer.addEventListener(Event.RemoteDuck, e => {
@@ -121,17 +98,10 @@ export default function MusicPlayer({route, navigation}) {
 
       // exitPlayer();
     };
-  }, []);
+  }, [song, scrollX]);
 
   // change the song when index changes
   useEffect(() => {
-    if (isPlayerReady.current && isItFromUser.current) {
-      TrackPlayer.skip(music[songIndex].id)
-        .then(_ => {
-          console.log('changed track');
-        })
-        .catch(e => console.log('error in changing track ', e));
-    }
     index.current = songIndex;
   }, [songIndex]);
 
@@ -159,52 +129,28 @@ export default function MusicPlayer({route, navigation}) {
   };
 
   // eslint-disable-next-line no-shadow
-  const renderItem = ({index, item}) => {
-    return (
-      <Animated.View
-        style={{
-          alignItems: 'center',
-          width: width,
-          height: height,
-          transform: [
-            {
-              translateX: Animated.multiply(
-                Animated.add(position, -index),
-                -100,
-              ),
-            },
-          ],
-        }}>
-        <Animated.Image
-          source={{uri: item.artwork}}
-          style={{width: 320, height: 320, borderRadius: 5}}
-        />
-      </Animated.View>
-    );
-  };
 
   return (
     <View style={styles.container}>
       <SafeAreaView style={{height: 320}}>
-        <Animated.FlatList
-          ref={slider}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={16}
-          data={music}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          onScroll={Animated.event(
-            [{nativeEvent: {contentOffset: {x: scrollX}}}],
-            {useNativeDriver: true},
-          )}
-        />
+        <Animated.View
+          style={{
+            alignItems: 'center',
+            width: width,
+            height: height,
+          }}>
+          <Animated.Image
+            source={{
+              uri: song.artwork,
+            }}
+            style={{width: 320, height: 320, borderRadius: 5}}
+          />
+        </Animated.View>
+        <View>
+          <Text style={styles.title}>{song.title}</Text>
+          <Text style={styles.artist}>{song.artist}</Text>
+        </View>
       </SafeAreaView>
-      <View>
-        <Text style={styles.title}>{music[songIndex].title}</Text>
-        <Text style={styles.artist}>{music[songIndex].artist}</Text>
-      </View>
 
       <SliderComp />
 

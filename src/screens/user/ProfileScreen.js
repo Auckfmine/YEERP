@@ -16,9 +16,7 @@ import Posts from '../user/userPosts';
 import Videos from '../user/userVideos';
 import {useDispatch, useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native-paper';
-import {getUserPhotos} from '../../../redux/user/imagesAction';
 import {getUserProfile} from '../../../redux/user/userAction';
-import Menu from '../../../navigation/menuDrawer';
 
 const Tab = createMaterialTopTabNavigator();
 

@@ -201,11 +201,6 @@ const EditProfile = ({route, navigation}) => {
           onPress={() => sheetRef.current.snapTo(0)}>
           <Text style={{color: '#3897F0'}}>Change Profile Photo</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.changeImage}
-          onPress={() => handleLogOut()}>
-          <Text style={{color: '#3897F0'}}>Logout</Text>
-        </TouchableOpacity>
       </View>
       <Text style={{fontSize: 15, color: 'white', marginLeft: 15}}>
         Informations Generales :{' '}

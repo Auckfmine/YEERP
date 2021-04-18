@@ -25,6 +25,8 @@ export default function Controller({onNext, onPrv}) {
       isPlaying.current = 'playing';
     } else if (playbackState === 'paused' || playbackState === 2) {
       isPlaying.current = 'paused';
+    } else if (playbackState === 'finished' || playbackState === 1) {
+      isPlaying.current = 'finished';
     } else {
       isPlaying.current = 'loading';
     }
@@ -36,6 +38,8 @@ export default function Controller({onNext, onPrv}) {
         return <Icon color="#fff" name="pause" size={45} />;
       case 'paused':
         return <Icon color="#fff" name="play-arrow" size={45} />;
+      case 'finished':
+        return <Icon color="#fff" name="replay" size={45} />;
       default:
         return <ActivityIndicator size={45} color="#fff" />;
     }
@@ -46,19 +50,15 @@ export default function Controller({onNext, onPrv}) {
       TrackPlayer.pause();
     } else if (isPlaying.current === 'paused') {
       TrackPlayer.play();
+    } else if (isPlaying.current === 'finished') {
+      TrackPlayer.reset();
     }
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={onPrv}>
-        <Icon color="#fff" name="skip-previous" size={45} />
-      </TouchableOpacity>
       <TouchableOpacity onPress={onPlayPause}>
         {returnPlayBtn()}
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onNext}>
-        <Icon color="#fff" name="skip-next" size={45} />
       </TouchableOpacity>
     </View>
   );

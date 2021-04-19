@@ -15,7 +15,7 @@ import api from '../../../api/apiCall';
 import {useDispatch} from 'react-redux';
 import {getUserPhotos} from '../../../redux/user/imagesAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {set} from 'react-native-reanimated';
+
 const screenSize = Dimensions.get('window').width;
 const tile = screenSize / 3;
 //user id need to get imported from redux state

@@ -9,9 +9,16 @@ export default class videoPlayer extends Component {
   }
 
   render() {
+    const {url} = this.props.route.params;
+
     return (
       <Video
-        source={{uri: this.props.route.params.url}} // Can be a URL or a local file.
+        fullscreenAutorotate={true}
+        fullscreenOrientation="landscape"
+        resizeMode="contain"
+        controls={true}
+        automaticallyWaitsToMinimizeStalling={true}
+        source={{uri: url}} // Can be a URL or a local file.
         ref={ref => {
           this.player = ref;
         }} // Store reference
@@ -33,5 +40,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    backgroundColor: '#121212',
   },
 });

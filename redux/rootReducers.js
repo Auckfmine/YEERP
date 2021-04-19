@@ -7,11 +7,13 @@ import passwordResetReducer from './auth/resetPass';
 import checkInternetReducer from '../redux/internetConnection/internet';
 import checkVerificationCodeReducer from '../redux/auth/verificationCode';
 import userPhotosReducer from '../redux/user/images';
+import userVideosReducer from '../redux/user/videos/videos';
 export default combineReducers({
   login: loginReducer,
   registration: registerReducer,
   user: UserReducer,
   userPhotos: userPhotosReducer,
+  userVideos: userVideosReducer,
   passwordResetRequest: passwordResetReducer,
   checkInternet: checkInternetReducer,
   verificationCode: checkVerificationCodeReducer,

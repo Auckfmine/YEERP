@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -9,15 +10,29 @@ import {
   Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-const {Videos} = require('../../data/videos');
+import {useDispatch, useSelector} from 'react-redux';
+import {getUserVideos} from '../../../redux/user/videos/videoActions';
+
 const screenSize = Dimensions.get('window').width;
-const tile = screenSize / 2;
-const userVideos = ({navigation}) => {
+const tile = screenSize / 3;
+const UserVideos = ({navigation}) => {
+  const videos = useSelector(state => state.userVideos.videos);
+  const isLoading = useSelector(state => state.userVideos.isLoading);
+  const dispatch = useDispatch();
+  const getVideos = async () => {
+    const dataObject = await AsyncStorage.getItem('user');
+    const json = await JSON.parse(dataObject);
+
+    dispatch(getUserVideos(json.user._id));
+  };
+  useEffect(() => {
+    getVideos();
+  }, []);
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate('Video', {url: item.sources});
+          navigation.navigate('Video', {url: item.source});
         }}>
         <View>
           <Icon
@@ -34,16 +49,18 @@ const userVideos = ({navigation}) => {
   return (
     <View style={styles.container}>
       <FlatList
-        numColumns={2}
-        keyExtractor={item => item.id}
-        data={Videos}
+        onRefresh={getVideos}
+        refreshing={isLoading}
+        numColumns={3}
+        keyExtractor={item => item._id}
+        data={videos}
         renderItem={renderItem}
       />
     </View>
   );
 };
 
-export default userVideos;
+export default UserVideos;
 
 const styles = StyleSheet.create({
   container: {

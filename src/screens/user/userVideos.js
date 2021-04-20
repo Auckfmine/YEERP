@@ -9,6 +9,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
+import {ActivityIndicator} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
 import {getUserVideos} from '../../../redux/user/videos/videoActions';
@@ -28,6 +29,20 @@ const UserVideos = ({navigation}) => {
   useEffect(() => {
     getVideos();
   }, []);
+
+  if (isLoading === true) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#121212',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity

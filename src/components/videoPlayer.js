@@ -10,7 +10,7 @@ export default class videoPlayer extends Component {
 
   render() {
     const {url} = this.props.route.params;
-
+    console.log(url);
     return (
       <Video
         fullscreenAutorotate={true}

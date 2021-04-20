@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {
   FlatList,
@@ -11,7 +10,6 @@ import {
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
-import api from '../../../api/apiCall';
 import {useDispatch} from 'react-redux';
 import {getUserPhotos} from '../../../redux/user/imagesAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -38,6 +36,15 @@ const UserMusic = ({navigation}) => {
     setIsLoading(false);
   }, []);
 
+  if (isLoading === true || photos === undefined) {
+    console.log('isLoading ffff');
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
+
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
@@ -51,18 +58,14 @@ const UserMusic = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator style={styles.loader} color="white" size="large" />
-      ) : (
-        <FlatList
-          onRefresh={getLocalData}
-          refreshing={isLoading}
-          numColumns={3}
-          keyExtractor={item => item._id}
-          data={photos}
-          renderItem={renderItem}
-        />
-      )}
+      <FlatList
+        onRefresh={getLocalData}
+        refreshing={isLoading}
+        numColumns={3}
+        keyExtractor={item => item._id}
+        data={photos}
+        renderItem={renderItem}
+      />
     </View>
   );
 };
@@ -80,5 +83,11 @@ const styles = StyleSheet.create({
   image: {height: tile, width: tile, marginLeft: 2, marginTop: 2},
   loader: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#121212',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

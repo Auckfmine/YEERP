@@ -10,21 +10,42 @@ import {
   Alert,
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {ActivityIndicator} from 'react-native-paper';
+import {useSelector} from 'react-redux';
+import api from '../../../api/apiCall';
 //const {music} = require('../../data/music');
 const screenSize = Dimensions.get('window').width;
 const tile = screenSize / 2;
 const UserPosts = ({navigation}) => {
   const [music, setMusic] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+  const userId = useSelector(state => state.user.user._id);
   const getMusic = () => {
-    axios
-      .get('http://10.0.2.2:8000/music/6077673d0b7a273524d76ba2')
-      .then(track => setMusic(track.data.tracks))
-      .catch(err => Alert.alert(err));
+    if (userId === undefined) {
+      return setLoading(true);
+    }
+    setLoading(true);
+    api
+      .get(`music/${userId}`)
+      .then(track => {
+        setMusic(track.data.tracks);
+        setLoading(false);
+      })
+      .catch(err => console.log(err));
   };
   useEffect(() => {
     getMusic();
-  }, []);
-  console.log(music);
+  }, [userId]);
+
+  if (isLoading === true) {
+    console.log('isLoadingggg');
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
+
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
@@ -39,6 +60,8 @@ const UserPosts = ({navigation}) => {
   return (
     <View style={styles.container}>
       <FlatList
+        onRefresh={getMusic}
+        refreshing={isLoading}
         numColumns={2}
         keyExtractor={item => item.id}
         data={music}
@@ -59,4 +82,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   image: {height: tile, width: tile, marginLeft: 2, marginTop: 2},
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#121212',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

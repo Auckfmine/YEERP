@@ -12,6 +12,7 @@ import {
 import {ActivityIndicator} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
+import api from '../../../api/apiCall';
 import {getUserVideos} from '../../../redux/user/videos/videoActions';
 
 const screenSize = Dimensions.get('window').width;
@@ -30,6 +31,14 @@ const UserVideos = ({navigation}) => {
     getVideos();
   }, []);
 
+  const deleteVideo = item => {
+    api
+      .delete(`user/video/${item._id}`)
+      .then(data => {
+        console.log(data.data);
+      })
+      .catch(err => console.log(err));
+  };
   if (isLoading === true) {
     return (
       <View
@@ -46,6 +55,7 @@ const UserVideos = ({navigation}) => {
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
+        onLongPress={deleteVideo(item)}
         onPress={() => {
           navigation.navigate('Video', {url: item.source});
         }}>

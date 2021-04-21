@@ -64,9 +64,13 @@ const DrawerContent = props => {
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="home-outline" color={color} size={size} />
+                <Icon
+                  name="account-details-outline"
+                  color={color}
+                  size={size}
+                />
               )}
-              label="Edit Profile"
+              label="Mes Details"
               onPress={() => {
                 props.navigation.navigate('Home');
               }}
@@ -75,16 +79,27 @@ const DrawerContent = props => {
               icon={({color, size}) => (
                 <Icon name="account-outline" color={color} size={size} />
               )}
-              label="Friends"
+              label="Mes Amis"
               onPress={() => {
                 props.navigation.navigate('Profile');
               }}
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="bookmark-outline" color={color} size={size} />
+                <Icon name="account-group" color={color} size={size} />
               )}
-              label="Bookmarks"
+              label="Mes groupes"
+              onPress={() => {
+                props.navigation.navigate('BookmarkScreen');
+              }}
+            />
+          </Drawer.Section>
+          <Drawer.Section title="Securité">
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="account-alert-outline" color={color} size={size} />
+              )}
+              label="Gérer le mot de passe"
               onPress={() => {
                 props.navigation.navigate('BookmarkScreen');
               }}
@@ -93,7 +108,7 @@ const DrawerContent = props => {
           <Drawer.Section title="Preferences">
             <TouchableRipple onPress={() => {}}>
               <View style={styles.preference}>
-                <Text>Dark Theme</Text>
+                <Text>Changer le theme</Text>
                 <View pointerEvents="none">
                   <Switch value={paperTheme.dark} />
                 </View>
@@ -107,7 +122,7 @@ const DrawerContent = props => {
           icon={({color, size}) => (
             <Icon name="exit-to-app" color={color} size={size} />
           )}
-          label="Sign Out"
+          label="Deconnexion"
           onPress={() => {
             handleSignOut();
           }}

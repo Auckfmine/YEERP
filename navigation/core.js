@@ -11,6 +11,7 @@ import Create from '../src/screens/core/create';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Image} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import ICon from 'react-native-vector-icons/Feather';
 import AddButton from '../src/components/tabBar/addButton';
 import Menu from './menuDrawer';
 const Tab = createBottomTabNavigator();
@@ -22,28 +23,6 @@ export default function CoreRoutes() {
         style: {position: 'absolute', backgroundColor: 'black'},
         showLabel: false,
       }}>
-      <Tab.Screen
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <Image
-              source={{
-                uri:
-                  'https://images.unsplash.com/photo-1594270410221-e6a33cbc6fb9?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MzV8fGh1bWFufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-              }}
-              color={color}
-              style={{
-                width: size,
-                height: size,
-                borderRadius: 100,
-                borderWidth: 1,
-                borderColor: 'white',
-              }}
-            />
-          ),
-        }}
-        name="Profiles"
-        component={Profile}
-      />
       <Tab.Screen
         options={{
           tabBarIcon: ({color, size}) => (
@@ -76,11 +55,20 @@ export default function CoreRoutes() {
       <Tab.Screen
         options={{
           tabBarIcon: ({color, size}) => (
-            <Icon name="ios-heart-outline" color={color} size={size} />
+            <Icon name="ios-notifications-outline" color={color} size={size} />
           ),
         }}
         name="Search"
         component={Search}
+      />
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <ICon name="user" color={color} size={size} />
+          ),
+        }}
+        name="Profiles"
+        component={Profile}
       />
     </Tab.Navigator>
   );

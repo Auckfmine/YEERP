@@ -33,17 +33,9 @@ import {useDispatch, useSelector} from 'react-redux';
 //actions
 import {loginFail, loginPending, loginSuccess} from '../../../redux/auth/login';
 import {getUserProfile} from '../../../redux/user/userAction';
-import {checkConnection} from '../../../redux/internetConnection/handleInternetState';
+
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import NetInfo from '@react-native-community/netinfo';
-import {useBackHandler} from '@react-native-community/hooks';
-
-//internetCheck actions
-import {
-  internetConnected,
-  internetDisconnected,
-} from '../../../redux/internetConnection/internet';
 import {getUserPhotos} from '../../../redux/user/imagesAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 //Screen
@@ -114,9 +106,9 @@ const Login = ({navigation}) => {
         dispatch(loginSuccess());
         await AsyncStorage.setItem('user', JSON.stringify(response.data));
 
-        return navigation.navigate('Profile2', {
-          screen: 'Profiles',
-          params: {local: response.data},
+        return navigation.navigate('Main', {
+          screen: 'Profile2',
+          params: {screen: 'Profiles', params: {local: response.data}},
         });
       }
 

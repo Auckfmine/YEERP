@@ -20,21 +20,20 @@ import {getUserProfile} from '../../../redux/user/userAction';
 
 const Tab = createMaterialTopTabNavigator();
 
-const ProfileScreen = ({route, navigation}) => {
-  const {user} = useSelector(state => state.user);
+const ProfileScreen = ({navigation}) => {
+  const user = useSelector(state => state.user.user);
+  // console.log('userr', user);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
 
-  const {local} = route.params || '';
-
   //get the data from the api if there is no state stored in redux
   useEffect(() => {
-    dispatch(getUserProfile(local.user._id));
+    dispatch(getUserProfile(user._id));
     //dispatch(getUserPhotos(local.user._id));
     setIsLoading(false);
 
     //if (!user.email) return getUser();
-  }, [dispatch, local.user._id, user.email]);
+  }, [dispatch, user._id]);
   //console.log(isLoading);
   //console.log(user);
 
@@ -69,9 +68,7 @@ const ProfileScreen = ({route, navigation}) => {
           <Image
             style={styles.ProfileImage}
             source={{
-              uri: !user.photo
-                ? 'https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png'
-                : user.photo,
+              uri: user.photo,
             }}
           />
           <Text style={styles.UserName}>@{user.userName}</Text>
@@ -84,40 +81,21 @@ const ProfileScreen = ({route, navigation}) => {
                 flexDirection: 'row',
                 justifyContent: 'space-evenly',
               }}>
-              <Text style={styles.userInfoText}>Postes</Text>
-              <Text style={styles.userInfoText}>Folowers</Text>
-              <Text style={styles.userInfoText}>Folowing</Text>
+              <Text style={styles.userInfoText}>publications</Text>
+              <Text style={styles.userInfoText}>amis</Text>
             </View>
 
             <View
               style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
               <Text style={styles.userInfoText}>{user.posts}</Text>
-              <Text style={styles.userInfoText}>{user.folowing}</Text>
-              <Text style={styles.userInfoText}>{user.folowers}</Text>
+              <Text style={styles.amis}>
+                {user === {} ? '' : user.friends.length}
+              </Text>
             </View>
           </View>
         </View>
         <View style={styles.bioContainer}>
           <Text style={styles.UserName}>{user.bio}</Text>
-        </View>
-        <View style={styles.editProfile}>
-          <TouchableOpacity
-            style={styles.editProfileBtn}
-            onPress={() => {
-              navigation.navigate('EditProfile', {
-                logo: user.photo,
-                id: local.user._id,
-              });
-            }}>
-            <Text
-              style={{
-                color: 'white',
-                marginHorizontal: '30%',
-                marginVertical: 5,
-              }}>
-              edit profile
-            </Text>
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -191,7 +169,7 @@ const styles = StyleSheet.create({
   ProfileImage: {
     height: 80,
     width: 80,
-    borderRadius: 100,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: '#F9F9F9',
   },
@@ -202,7 +180,10 @@ const styles = StyleSheet.create({
   },
   userInfoText: {
     color: '#F9F9F9',
-    paddingRight: 15,
+    paddingRight: 20,
+  },
+  amis: {
+    color: 'white',
   },
   UserName: {
     color: '#F9F9F9',

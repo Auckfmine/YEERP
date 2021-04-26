@@ -6,16 +6,15 @@ import * as Animatable from 'react-native-animatable';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NetworkConsumer, useIsConnected} from 'react-native-offline';
+import {useDispatch} from 'react-redux';
+import {getUserProfile} from '../../redux/user/userAction';
 const CostumProgressBar = Animatable.createAnimatableComponent(ProgressBar);
+
 const Splash = ({navigation}) => {
   const [progress, setProgress] = useState(0);
   const [localData, setLocalData] = useState(null);
-
+  const dispatch = useDispatch();
   const isConnected = useIsConnected();
-
-  useEffect(() => {
-    animate();
-  }, []);
 
   useEffect(() => {
     const getData = async () => {
@@ -23,7 +22,7 @@ const Splash = ({navigation}) => {
         const value = await AsyncStorage.getItem('user');
         if (value !== null) {
           console.log('sotred user', value);
-          return setLocalData(value);
+          return setLocalData(JSON.parse(value));
         }
       } catch (e) {
         // error reading value
@@ -31,18 +30,20 @@ const Splash = ({navigation}) => {
     };
     getData();
   }, []);
+
+  useEffect(() => {
+    animate();
+  }, []);
+
   useEffect(() => {
     if (progress === 1) {
       if (localData) {
-        const local = JSON.parse(localData);
-        return navigation.navigate('Main', {
-          screen: 'Profile2',
-          params: {screen: 'Profiles', params: {local}},
-        });
+        dispatch(getUserProfile(localData.user._id));
+        return navigation.navigate('Main');
       }
-      navigation.navigate('Login');
+      return navigation.navigate('Login');
     }
-  });
+  }, [dispatch, navigation, localData, progress]);
   const animate = () => {
     let progress = 0;
     setProgress(progress);
@@ -79,7 +80,7 @@ const Splash = ({navigation}) => {
       <View style={styles.imageContainer}>
         <Animatable.Image
           delay={1000}
-          animation="bounceInDown"
+          animation="fadeIn"
           style={styles.logo}
           source={require('../assets/images/logo-3.png')}
         />

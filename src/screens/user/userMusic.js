@@ -18,7 +18,7 @@ const screenSize = Dimensions.get('window').width;
 const tile = screenSize / 3;
 //user id need to get imported from redux state
 
-const UserMusic = ({navigation}) => {
+const UserMusic = ({route, navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const photos = useSelector(state => state.userPhotos.photos);
   const dispatch = useDispatch();

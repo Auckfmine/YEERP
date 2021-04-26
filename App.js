@@ -14,30 +14,27 @@ import Forget1 from './src/screens/auth/forgetPasswordStep1';
 import Forget2 from './src/screens/auth/forgetPasswordStep2';
 import Forget3 from './src/screens/auth/forgetPasswordStep3';
 import splashScreen from './src/screens/splash';
-import ProfileScreen from './src/screens/user/ProfileScreen';
 import EditProfile from './src/screens/user/editProfile';
-import Core from './navigation/core';
 import ImageViewer from './src/components/imageViewer';
 import videoPlayer from './src/components/videoPlayer';
 import MusicPlayer from './src/components/musicPlayer';
 import DrawerNav from './navigation/menuDrawer';
+//socket Io
+import {io} from 'socket.io-client';
+const socket = io('http://10.0.2.2:8000');
 //navigation
 const stack = createStackNavigator();
-
+socket.on('connect', () => {
+  console.log('connected');
+});
+socket.emit('cliendEvent', () => {});
 //redux
 import {Provider} from 'react-redux';
 import store from './store';
-import Login from './src/screens/auth/login';
-import Menu from './navigation/menuDrawer';
+import SearchFriends from './src/screens/friends/friends';
+import FriendProfileScreen from './src/screens/friends/friendsProfile';
 
 const App = ({navigation}) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoaded(true);
-    }, 3500);
-  }, []);
   return (
     <LanguageProvider language="fr-FR">
       <Provider store={store}>
@@ -56,6 +53,11 @@ const App = ({navigation}) => {
                 <stack.Screen name="Video" component={videoPlayer} />
                 <stack.Screen name="MusicPlayer" component={MusicPlayer} />
                 <stack.Screen name="EditProfile" component={EditProfile} />
+                <stack.Screen name="SearchFriends" component={SearchFriends} />
+                <stack.Screen
+                  name="FriendProfileScreen"
+                  component={FriendProfileScreen}
+                />
               </stack.Navigator>
             </NavigationContainer>
           </SafeAreaProvider>

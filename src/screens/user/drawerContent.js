@@ -16,21 +16,28 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector} from 'react-redux';
+import {ActivityIndicator} from 'react-native';
+
 const DrawerContent = props => {
   const paperTheme = useTheme();
-  const user = useSelector(state => state.user.user); //get the user data from redux either from signup or from rendering the profile page
-
+  let {user} = useSelector(state => state.user); //get the user data from redux either from signup or from rendering the profile page
+  //console.log('redux user', user);
   const handleSignOut = () => {
     AsyncStorage.removeItem('user')
       .then(() => props.navigation.navigate('Login'))
       .catch(err => Alert.alert(err));
   };
+
   return (
     <View style={{flex: 1, backgroundColor: 'grey'}}>
       <DrawerContentScrollView {...props}>
         <View style={styles.drawerContent}>
           <View style={styles.userInfoSection}>
-            <View style={{flexDirection: 'row', marginTop: 15}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginTop: 15,
+              }}>
               <Avatar.Image
                 source={{
                   uri: user.photo,
@@ -39,7 +46,9 @@ const DrawerContent = props => {
               />
               <View style={{marginLeft: 15, flexDirection: 'column'}}>
                 <Title style={styles.title}>
-                  {user.firstName + ' ' + user.lastName}
+                  {user.firstName && user.lastName
+                    ? user.firstName + ' ' + user.lastName
+                    : 'Anonyme'}
                 </Title>
                 <Caption style={styles.caption}>@{user.userName}</Caption>
               </View>
@@ -48,15 +57,15 @@ const DrawerContent = props => {
             <View style={styles.row}>
               <View style={styles.section}>
                 <Paragraph style={[styles.paragraph, styles.caption]}>
-                  {user.folowing}
+                  {user.posts}
                 </Paragraph>
-                <Caption style={styles.caption}>Following</Caption>
+                <Caption style={styles.caption}>Publications</Caption>
               </View>
               <View style={styles.section}>
                 <Paragraph style={[styles.paragraph, styles.caption]}>
-                  {user.folowers}
+                  {user === {} ? '' : user.friends.length}
                 </Paragraph>
-                <Caption style={styles.caption}>Followers</Caption>
+                <Caption style={styles.caption}>Amis</Caption>
               </View>
             </View>
           </View>
@@ -72,7 +81,10 @@ const DrawerContent = props => {
               )}
               label="Mes Details"
               onPress={() => {
-                props.navigation.navigate('Home');
+                props.navigation.navigate('EditProfile', {
+                  logo: user.photo,
+                  id: user._id,
+                });
               }}
             />
             <DrawerItem
@@ -81,7 +93,7 @@ const DrawerContent = props => {
               )}
               label="Mes Amis"
               onPress={() => {
-                props.navigation.navigate('Profile');
+                props.navigation.navigate('SearchFriends');
               }}
             />
             <DrawerItem
@@ -142,12 +154,12 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   title: {
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 3,
     fontWeight: 'bold',
   },
   caption: {
-    fontSize: 14,
+    fontSize: 13,
     lineHeight: 14,
   },
   row: {

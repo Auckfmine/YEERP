@@ -16,9 +16,10 @@ import AddButton from '../src/components/tabBar/addButton';
 import Menu from './menuDrawer';
 const Tab = createBottomTabNavigator();
 
-export default function CoreRoutes() {
+const CoreRoutes = ({navigation}) => {
   return (
     <Tab.Navigator
+      initialRouteName="Profiles"
       tabBarOptions={{
         style: {position: 'absolute', backgroundColor: 'black'},
         showLabel: false,
@@ -39,8 +40,8 @@ export default function CoreRoutes() {
             <Icon name="search-outline" color={color} size={size} />
           ),
         }}
-        name="Notification"
-        component={Notification}
+        name="Search"
+        component={Search}
       />
 
       <Tab.Screen
@@ -58,8 +59,8 @@ export default function CoreRoutes() {
             <Icon name="ios-notifications-outline" color={color} size={size} />
           ),
         }}
-        name="Search"
-        component={Search}
+        name="Notification"
+        component={Notification}
       />
       <Tab.Screen
         options={{
@@ -72,4 +73,6 @@ export default function CoreRoutes() {
       />
     </Tab.Navigator>
   );
-}
+};
+
+export default CoreRoutes;

@@ -18,6 +18,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native-paper';
 import {getUserProfile} from '../../../redux/user/userAction';
 import api from '../../../api/apiCall';
+import FriendPhotos from './friendPhotos';
+import {Alert} from 'react-native';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -26,25 +28,98 @@ const FriendProfileScreen = ({route, navigation}) => {
 
   // console.log('userr', user);
   const [isLoading, setIsLoading] = useState(true);
-  const [friend, setFriend] = useState();
+  const [friend, setFriend] = useState('');
+
   const userId = route.params.id;
-  console.log('friend', friend);
+  const dispatch = useDispatch()
+
   const getFriend = async id => {
     try {
       const response = await api.get(`/user/${id}`);
-      console.log(response.data);
-      setFriend(response.data);
+
+      setFriend(response.data.user);
       return setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-    if (friend === undefined) {
-      getFriend(userId);
+    getFriend(userId);
+    checkIsFriend()
+  }, [userId]);
+
+  const checkIsFriend = () => {
+    let result = false;
+    user.friends.map(person => {
+      if (person.id === friend._id) {
+        result = true;
+      }
+    });
+    return result;
+  };
+
+  const handleUnfriend = async () => {
+    try {
+      const data = await api.post('/unfriend/', {
+        myId: user._id,
+        friendId: friend._id,
+      });
+      
+      Alert.alert('Succés', `${friend.userName} est retiré(e) avec succés`);
+    } catch (error) {
+      console.log(error);
     }
-  }, [userId, friend]);
+  };
+
+  const handleSendInvitations = async () => {
+    try {
+      const response = await api.post('/sendInvitation/', {
+        myId: user._id,
+        myName: user.userName,
+        friendId: friend._id,
+        friendName: friend.userName,
+      });
+      console.log(response.data);
+      dispatch(getUserProfile(user._id));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const checkISInvitationSent = () => {
+    let result = false;
+    user.sentRequests.map(request => {
+      if (request.id === friend._id) {
+        result = true;
+      }
+    });
+    return result;
+  };
+  const handleCancelInvitation = async () => {
+    try {
+      const response = await api.post('/cancelInvitation', {
+        myId: user._id,
+        myName: user.userName,
+        friendId: friend._id,
+        friendName: friend.userName,
+      });
+      dispatch(getUserProfile(user._id));
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (isLoading) {
+    return (
+      <ActivityIndicator
+        style={styles.loadingScreen}
+        color="white"
+        size="large"
+      />
+    );
+  }
+
+  if (friend === undefined) {
     return (
       <ActivityIndicator
         style={styles.loadingScreen}
@@ -103,6 +178,25 @@ const FriendProfileScreen = ({route, navigation}) => {
         <View style={styles.bioContainer}>
           <Text style={styles.UserName}>{friend.bio}</Text>
         </View>
+        <View style={styles.buttons}>
+          {checkIsFriend() ? (
+            <>
+              <TouchableOpacity style={styles.chatContainer}>
+                <Text style={{color: '#ffffff'}}>message</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.chatContainer}
+                onPress={() => handleUnfriend()}>
+                <Text style={{color: '#ffffff'}}>retirer</Text>
+              </TouchableOpacity>
+            </>
+          ) : checkISInvitationSent()? <TouchableOpacity style={[styles.chatContainer,{backgroundColor:"#008AFF"}]} onPress={()=>{handleCancelInvitation()}}>
+          <Text style={{color: '#ffffff'}}>{"invitation envoyeé"}</Text>
+        </TouchableOpacity> :<TouchableOpacity style={styles.chatContainer} onPress={()=>{handleSendInvitations()}}>
+          <Text style={{color: '#ffffff'}}>{"ajouter"}</Text>
+        </TouchableOpacity>}
+        </View>
       </View>
 
       <View style={styles.bottomHalf}>
@@ -142,7 +236,7 @@ const FriendProfileScreen = ({route, navigation}) => {
               ),
             }}
             name="FriendsPosts"
-            component={Posts}
+            children={() => <FriendPhotos friendId={userId} />}
           />
         </Tab.Navigator>
       </View>
@@ -222,5 +316,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#121212',
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  chatContainer: {
+    marginHorizontal: 20,
+    backgroundColor: 'black',
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    borderRadius: 10,
+    shadowColor: 'white',
+    elevation: 5,
   },
 });

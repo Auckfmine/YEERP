@@ -25,7 +25,7 @@ const SearchFriends = ({navigation}) => {
   useEffect(() => {
     const getFriends = async () => {
       const response = await api.get(`getAllFriends/${currentUser._id}`);
-      console.log(response.data.friends[0].friends);
+      console.log("friend",response.data.friends[0].friends);
       setUsers(response.data.friends[0].friends);
     };
     getFriends();

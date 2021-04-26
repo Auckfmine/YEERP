@@ -145,7 +145,7 @@ const Search = ({navigation}) => {
             resizeMode="cover"
             source={{uri: item.photo}}
           />
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={() => {navigation.navigate("FriendProfileScreen",{id:item._id})}}>
             {/*  if the user clicks on the name then navigate to user profile*/}
             <View>
               <Text style={styles.info}>{item.userName}</Text>

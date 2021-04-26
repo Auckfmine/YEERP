@@ -89,7 +89,7 @@ const ProfileScreen = ({navigation}) => {
               style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
               <Text style={styles.userInfoText}>{user.posts}</Text>
               <Text style={styles.amis}>
-                {user === {} ? '' : user.friends.length}
+                {}
               </Text>
             </View>
           </View>

@@ -22,32 +22,20 @@ import {getUserProfile} from '../../../redux/user/userAction';
 import api from '../../../api/apiCall';
 import {onChange} from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const createFormData = (photo, body = {}) => {
-  const data = new FormData();
-
-  data.append('file', {
-    name: photo.fileName,
-    type: photo.type,
-    uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
-  });
-
-  Object.keys(body).forEach(key => {
-    data.append(key, body[key]);
-  });
-
-  return data;
-};
+import Video from 'react-native-video';
+import DocumentPicker from 'react-native-document-picker';
 
 const EditProfile = ({route, navigation}) => {
   const USER_ID = useSelector(state => state.user.user._id) || route.params.id;
 
   const userData = useSelector(state => state.user.user);
   const [image, setImage] = useState({uri: route.params.logo});
+  const [video, setVideo] = useState({uri: ''});
   const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState(userData);
   const sheetRef = React.createRef();
-
+  const VideoRef = React.createRef();
+  const MusicRef = React.createRef();
   const dispatch = useDispatch();
 
   const getLocalData = async () => {
@@ -55,6 +43,24 @@ const EditProfile = ({route, navigation}) => {
     const user = await JSON.parse(data).user._id;
     //get the user Id either from localstorage if it is saved or  from redux after logging in
     setUserInfo({...userInfo, _id: !USER_ID ? user : USER_ID});
+  };
+
+  console.log('selectedImage', image);
+
+  const createFormData = (photo, body = {}) => {
+    const data = new FormData();
+
+    data.append('file', {
+      name: !photo.name ? photo.fileName : photo.name,
+      type: photo.type,
+      uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+    });
+
+    Object.keys(body).forEach(key => {
+      data.append(key, body[key]);
+    });
+
+    return data;
   };
 
   const handleLogOut = async () => {
@@ -88,19 +94,37 @@ const EditProfile = ({route, navigation}) => {
       },
     );
   };
-
+  //chose video from library
+  const chooseVideoFromLibrary = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.allFiles],
+      });
+      console.log('image', res);
+      setImage(res);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+  };
   //function to handle opening the phone's library
   const choosePhotoFromLibrary = () => {
     launchImageLibrary(
       {
-        maxWidth: 200,
-        maxHeight: 200,
+        title: 'Select a picture',
+        cancelButtonTitle: 'Cancel',
+
+        takePhotoButtonTitle: 'Take picture',
+        chooseFromLibraryButtonTitle: 'Phone',
         mediaType: 'photo',
       },
       res => {
         setImage(res);
-
-        //console.log('uploaded Image', res);
+        console.log(res.type);
+        console.log('uploaded Image', res);
       },
     );
   };
@@ -122,6 +146,31 @@ const EditProfile = ({route, navigation}) => {
         .then(response => {
           console.log('response', response.data);
           dispatch(getUserProfile(USER_ID)); //dispatch getProfile Action to update the store with the new image
+          Alert.alert('Succes', 'contenue modifié avec succés');
+        })
+        .catch(error => {
+          console.log('error', error.message);
+        });
+      setIsLoading(false);
+    }
+  };
+  const handleUploadVideo = () => {
+    setIsLoading(true);
+    //check if the image changed or no
+    if (image.fileName) {
+      axios
+        .patch(
+          `http://10.0.2.2:8000/userImage/${USER_ID}`,
+          createFormData(video),
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        )
+        .then(response => {
+          console.log('response', response.data);
+          //dispatch(getUserProfile(USER_ID)); //dispatch getProfile Action to update the store with the new image
           Alert.alert('Succes', 'contenue modifié avec succés');
         })
         .catch(error => {
@@ -166,6 +215,27 @@ const EditProfile = ({route, navigation}) => {
       </TouchableOpacity>
     </View>
   );
+  const renderVideoContent = () => (
+    <View style={styles.panel}>
+      <View style={{alignItems: 'center'}}>
+        <Text style={styles.panelTitle}>Upload Video</Text>
+        <Text style={styles.panelSubtitle}>Choisir Un mini Video</Text>
+      </View>
+
+      <TouchableOpacity
+        style={styles.panelButton}
+        onPress={chooseVideoFromLibrary}>
+        <Text style={styles.panelButtonTitle}>selectionner un Video</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.panelButton}
+        onPress={() => {
+          VideoRef.current.snapTo(1);
+        }}>
+        <Text style={styles.panelButtonTitle}>retour</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   //the view of the page
   return (
@@ -177,6 +247,14 @@ const EditProfile = ({route, navigation}) => {
         borderRadius={10}
         renderContent={renderContent}
       />
+      <BottomSheet
+        initialSnap={1}
+        ref={VideoRef}
+        snapPoints={[450, 0]}
+        borderRadius={10}
+        renderContent={renderVideoContent}
+      />
+
       <StatusBar style={{backgroundColor: '#121212'}} />
       <View style={styles.upperBar}>
         <TouchableOpacity
@@ -196,10 +274,16 @@ const EditProfile = ({route, navigation}) => {
       </View>
       <View>
         <Image style={styles.profileImage} source={{uri: image.uri}} />
+        <Video source={{uri: video.uri}} />
         <TouchableOpacity
           style={styles.changeImage}
           onPress={() => sheetRef.current.snapTo(0)}>
           <Text style={{color: '#3897F0'}}>Change Profile Photo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.videoChose}
+          onPress={() => VideoRef.current.snapTo(0)}>
+          <Text style={{color: '#3897F0'}}>choisir un mini video</Text>
         </TouchableOpacity>
       </View>
       <Text style={{fontSize: 15, color: 'white', marginLeft: 15}}>
@@ -290,7 +374,7 @@ const styles = StyleSheet.create({
   },
   changeImage: {
     alignSelf: 'center',
-    marginVertical: 25,
+    marginVertical: 10,
   },
   //modal styles here
   panel: {
@@ -336,5 +420,9 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 'bold',
     color: 'white',
+  },
+  videoChose: {
+    alignSelf: 'center',
+    marginVertical: 10,
   },
 });

@@ -20,37 +20,24 @@ const screenSize = Dimensions.get('window').width;
 const tile = screenSize / 3;
 //firends Id needs to be imported from the routes
 
-const FriendPhotos = ({route, friendId, navigation}) => {
-  const [isLoading, setIsLoading] = useState(false);
+const FriendPhotos = ({friendId, navigation}) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [photos, setPhotos] = useState([]);
-  
-  
+  console.log(photos);
+  const getFriendPhotos = () => {
+    fetchPhotos('6087285db0732f34f4c3936e')
+      .then(data => {
+        setPhotos(data.photos);
+        setIsLoading(false);
+      })
+      .catch(err => console.log(err));
+  };
   useEffect(() => {
-    const getFriendPhotos = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetchPhotos(friendId);
-        if (response.success) {
-          setPhotos(response.photos);
-          console.log("photos",photos.length);
-          return setIsLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
     getFriendPhotos();
   }, []);
 
   if (isLoading === true) {
     console.log('isLoading ffff');
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="white" />
-      </View>
-    );
-  }
-  if (photos.length === 0) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="white" />
@@ -72,6 +59,8 @@ const FriendPhotos = ({route, friendId, navigation}) => {
   return (
     <View style={styles.container}>
       <FlatList
+        onRefresh={getFriendPhotos}
+        refreshing={isLoading}
         numColumns={3}
         keyExtractor={item => item._id}
         data={photos}

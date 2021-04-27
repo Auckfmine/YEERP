@@ -15,7 +15,7 @@ import {useSelector} from 'react-redux';
 import api from '../../../api/apiCall';
 //const {music} = require('../../data/music');
 const screenSize = Dimensions.get('window').width;
-const tile = screenSize / 2;
+const tile = screenSize / 3;
 const UserPosts = ({navigation}) => {
   const [music, setMusic] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -62,7 +62,7 @@ const UserPosts = ({navigation}) => {
       <FlatList
         onRefresh={getMusic}
         refreshing={isLoading}
-        numColumns={2}
+        numColumns={3}
         keyExtractor={item => item.id}
         data={music}
         renderItem={renderItem}

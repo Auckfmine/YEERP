@@ -33,6 +33,7 @@ import {Provider} from 'react-redux';
 import store from './store';
 import SearchFriends from './src/screens/friends/friends';
 import FriendProfileScreen from './src/screens/friends/friendsProfile';
+import Chat from './src/screens/chat/chat';
 
 const App = ({navigation}) => {
   return (
@@ -58,6 +59,7 @@ const App = ({navigation}) => {
                   name="FriendProfileScreen"
                   component={FriendProfileScreen}
                 />
+                <stack.Screen name="chat" component={Chat} />
               </stack.Navigator>
             </NavigationContainer>
           </SafeAreaProvider>

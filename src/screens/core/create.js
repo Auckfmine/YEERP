@@ -7,7 +7,10 @@ import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {getUserPhotos} from '../../../redux/user/imagesAction';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import CreatePostsTab from '../../../navigation/createPostsTab';
 const SERVER_URL = 'http://localhost:8000';
+const Tab = createMaterialTopTabNavigator();
 
 const createFormData = (photo, body = {}) => {
   const data = new FormData();
@@ -53,39 +56,8 @@ const App = () => {
   };*/
 
   //this function allows us to upload the current image found in the state (from library or from take photo)
-  const handleUploadPhoto = () => {
-    setIsLoading(true);
-    axios
-      .post(`http://10.0.2.2:8000/upload/${USER_ID}`, createFormData(photo), {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then(response => {
-        console.log('response', response.data);
-        dispatch(getUserPhotos(USER_ID));
-        alert('photo uploaded with success');
-      })
-      .catch(error => {
-        console.log('error', error.message);
-      });
-    setIsLoading(false);
-  };
 
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      {photo && (
-        <>
-          <Image source={{uri: photo.uri}} style={{width: 300, height: 300}} />
-          <Button
-            title={isLoading ? 'uploading ...' : 'Upload Photo'}
-            onPress={handleUploadPhoto}
-          />
-        </>
-      )}
-      <Button title="Choose Photo" onPress={handleChoosePhoto} />
-    </View>
-  );
+  return <CreatePostsTab />;
 };
 
 export default App;

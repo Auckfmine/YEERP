@@ -21,7 +21,7 @@ import api from '../../../api/apiCall';
 import FriendPhotos from './friendPhotos';
 import {Alert} from 'react-native';
 
-const Tab = createMaterialTopTabNavigator();
+const Tab2 = createMaterialTopTabNavigator();
 
 const FriendProfileScreen = ({route, navigation}) => {
   const user = useSelector(state => state.user.user);
@@ -31,7 +31,7 @@ const FriendProfileScreen = ({route, navigation}) => {
   const [friend, setFriend] = useState('');
 
   const userId = route.params.id;
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const getFriend = async id => {
     try {
@@ -45,7 +45,7 @@ const FriendProfileScreen = ({route, navigation}) => {
   };
   useEffect(() => {
     getFriend(userId);
-    checkIsFriend()
+    checkIsFriend();
   }, [userId]);
 
   const checkIsFriend = () => {
@@ -64,7 +64,7 @@ const FriendProfileScreen = ({route, navigation}) => {
         myId: user._id,
         friendId: friend._id,
       });
-      
+
       Alert.alert('Succés', `${friend.userName} est retiré(e) avec succés`);
     } catch (error) {
       console.log(error);
@@ -181,7 +181,9 @@ const FriendProfileScreen = ({route, navigation}) => {
         <View style={styles.buttons}>
           {checkIsFriend() ? (
             <>
-              <TouchableOpacity style={styles.chatContainer}>
+              <TouchableOpacity
+                style={styles.chatContainer}
+                onPress={() => navigation.navigate('chat')}>
                 <Text style={{color: '#ffffff'}}>message</Text>
               </TouchableOpacity>
 
@@ -191,22 +193,34 @@ const FriendProfileScreen = ({route, navigation}) => {
                 <Text style={{color: '#ffffff'}}>retirer</Text>
               </TouchableOpacity>
             </>
-          ) : checkISInvitationSent()? <TouchableOpacity style={[styles.chatContainer,{backgroundColor:"#008AFF"}]} onPress={()=>{handleCancelInvitation()}}>
-          <Text style={{color: '#ffffff'}}>{"invitation envoyeé"}</Text>
-        </TouchableOpacity> :<TouchableOpacity style={styles.chatContainer} onPress={()=>{handleSendInvitations()}}>
-          <Text style={{color: '#ffffff'}}>{"ajouter"}</Text>
-        </TouchableOpacity>}
+          ) : checkISInvitationSent() ? (
+            <TouchableOpacity
+              style={[styles.chatContainer, {backgroundColor: '#008AFF'}]}
+              onPress={() => {
+                handleCancelInvitation();
+              }}>
+              <Text style={{color: '#ffffff'}}>{'invitation envoyeé'}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.chatContainer}
+              onPress={() => {
+                handleSendInvitations();
+              }}>
+              <Text style={{color: '#ffffff'}}>{'ajouter'}</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
       <View style={styles.bottomHalf}>
-        <Tab.Navigator
+        <Tab2.Navigator
           tabBarOptions={{
             style: {backgroundColor: 'black'},
             showLabel: false,
             showIcon: true,
           }}>
-          <Tab.Screen
+          <Tab2.Screen
             options={{
               tabBarIcon: ({color, size}) => (
                 <Icon name="md-image-outline" color="white" size={24} />
@@ -216,7 +230,7 @@ const FriendProfileScreen = ({route, navigation}) => {
             component={Music}
           />
 
-          <Tab.Screen
+          <Tab2.Screen
             options={{
               tabBarIcon: ({color, size}) => (
                 <Icon name="ios-videocam-outline" color="white" size={24} />
@@ -225,7 +239,7 @@ const FriendProfileScreen = ({route, navigation}) => {
             name="FriendVideos"
             component={Videos}
           />
-          <Tab.Screen
+          <Tab2.Screen
             options={{
               tabBarIcon: ({color, size}) => (
                 <Icon
@@ -236,9 +250,9 @@ const FriendProfileScreen = ({route, navigation}) => {
               ),
             }}
             name="FriendsPosts"
-            children={() => <FriendPhotos friendId={userId} />}
+            component={FriendPhotos}
           />
-        </Tab.Navigator>
+        </Tab2.Navigator>
       </View>
     </View>
   );

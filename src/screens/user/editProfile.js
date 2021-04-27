@@ -133,9 +133,9 @@ const EditProfile = ({route, navigation}) => {
     setIsLoading(true);
     //check if the image changed or no
     if (image.fileName) {
-      axios
+      api
         .patch(
-          `http://10.0.2.2:8000/userImage/${USER_ID}`,
+          `/userImage/${USER_ID}`,
           createFormData(image),
           {
             headers: {
@@ -160,7 +160,7 @@ const EditProfile = ({route, navigation}) => {
     if (image.fileName) {
       axios
         .patch(
-          `http://10.0.2.2:8000/userImage/${USER_ID}`,
+          `/userImage/${USER_ID}`,
           createFormData(video),
           {
             headers: {
@@ -250,7 +250,7 @@ const EditProfile = ({route, navigation}) => {
       <BottomSheet
         initialSnap={1}
         ref={VideoRef}
-        snapPoints={[450, 0]}
+        snapPoints={[250, 0]}
         borderRadius={10}
         renderContent={renderVideoContent}
       />

@@ -63,7 +63,7 @@ const DrawerContent = props => {
               </View>
               <View style={styles.section}>
                 <Paragraph style={[styles.paragraph, styles.caption]}>
-                  {}
+                  {"0"}
                 </Paragraph>
                 <Caption style={styles.caption}>Amis</Caption>
               </View>

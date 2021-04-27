@@ -136,7 +136,7 @@ const Login = ({navigation}) => {
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Image
           style={styles.logo}
-          source={require('../../assets/images/logo-3.png')}
+          source={require('../../assets/images/logoFinal.png')}
         />
       </View>
 

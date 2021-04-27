@@ -26,7 +26,7 @@ const UserPosts = ({navigation}) => {
     }
     setLoading(true);
     api
-      .get(`music/${userId}`)
+      .get(`/music/${userId}`)
       .then(track => {
         setMusic(track.data.tracks);
         setLoading(false);

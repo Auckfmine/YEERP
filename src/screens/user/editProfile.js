@@ -10,6 +10,7 @@ import {
   ScrollView,
   Platform,
   Alert,
+  Dimensions,
 } from 'react-native';
 import Input from '../../components/userProfileComponnents/input';
 import {Divider} from 'react-native-elements';
@@ -63,16 +64,6 @@ const EditProfile = ({route, navigation}) => {
     return data;
   };
 
-  const handleLogOut = async () => {
-    try {
-      await AsyncStorage.removeItem('user');
-      return navigation.navigate('Login');
-    } catch (e) {
-      // remove error
-    }
-
-    console.log('Done.');
-  };
   useEffect(() => {
     getLocalData();
     dispatch(getUserProfile(userInfo._id));
@@ -134,19 +125,19 @@ const EditProfile = ({route, navigation}) => {
     //check if the image changed or no
     if (image.fileName) {
       api
-        .patch(
-          `/userImage/${USER_ID}`,
-          createFormData(image),
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+        .patch(`/userImage/${USER_ID}`, createFormData(image), {
+          headers: {
+            'Content-Type': 'multipart/form-data',
           },
-        )
+        })
         .then(response => {
           console.log('response', response.data);
-          dispatch(getUserProfile(USER_ID)); //dispatch getProfile Action to update the store with the new image
-          Alert.alert('Succes', 'contenue modifié avec succés');
+          dispatch(getUserProfile(USER_ID));
+          setIsLoading(false); //dispatch getProfile Action to update the store with the new image
+          Alert.alert(
+            'Mes details',
+            'la photo de profle a été modifié avec succés',
+          );
         })
         .catch(error => {
           console.log('error', error.message);
@@ -159,15 +150,11 @@ const EditProfile = ({route, navigation}) => {
     //check if the image changed or no
     if (image.fileName) {
       axios
-        .patch(
-          `/userImage/${USER_ID}`,
-          createFormData(video),
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+        .patch(`/userImage/${USER_ID}`, createFormData(video), {
+          headers: {
+            'Content-Type': 'multipart/form-data',
           },
-        )
+        })
         .then(response => {
           console.log('response', response.data);
           //dispatch(getUserProfile(USER_ID)); //dispatch getProfile Action to update the store with the new image
@@ -184,34 +171,35 @@ const EditProfile = ({route, navigation}) => {
       .patch(`/user/${USER_ID}`, userInfo)
       .then(response => {
         dispatch(getUserProfile(USER_ID));
+        Alert.alert('Mes details', 'Vos details ont été mises à jour');
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Erreur', "une erreur s'est produite veuillez réessayer");
       });
   };
   // a function to show the  sliding modal
   const renderContent = () => (
     <View style={styles.panel}>
       <View style={{alignItems: 'center'}}>
-        <Text style={styles.panelTitle}>Upload Photo</Text>
+        <Text style={styles.panelTitle}>Photo de Profile</Text>
         <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
       </View>
       <TouchableOpacity
         style={styles.panelButton}
         onPress={takePhotoFromCamera}>
-        <Text style={styles.panelButtonTitle}>Take Photo</Text>
+        <Text style={styles.panelButtonTitle}>prendre une photo</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.panelButton}
         onPress={choosePhotoFromLibrary}>
-        <Text style={styles.panelButtonTitle}>Choose From Library</Text>
+        <Text style={styles.panelButtonTitle}>Choisir depuis la galerie</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.panelButton}
         onPress={() => {
           sheetRef.current.snapTo(1);
         }}>
-        <Text style={styles.panelButtonTitle}>Cancel</Text>
+        <Text style={styles.panelButtonTitle}>Fermer</Text>
       </TouchableOpacity>
     </View>
   );
@@ -243,7 +231,7 @@ const EditProfile = ({route, navigation}) => {
       <BottomSheet
         initialSnap={1}
         ref={sheetRef}
-        snapPoints={[450, 0]}
+        snapPoints={[Dimensions.get('window').height / 2, 0]}
         borderRadius={10}
         renderContent={renderContent}
       />
@@ -261,36 +249,32 @@ const EditProfile = ({route, navigation}) => {
           onPress={() => {
             navigation.goBack();
           }}>
-          <Text style={styles.cancel}>Cancel</Text>
+          <Text style={styles.cancel}>Retour</Text>
         </TouchableOpacity>
-        <Text style={styles.editProfile}>Edit Profile</Text>
+        <Text style={styles.editProfile}>Profile</Text>
         <TouchableOpacity
           onPress={() => {
             handleUploadPhoto();
             handleUserInfoChange();
           }}>
-          <Text style={styles.done}>Done</Text>
+          <Text style={styles.done}>Confirmer</Text>
         </TouchableOpacity>
       </View>
       <View>
         <Image style={styles.profileImage} source={{uri: image.uri}} />
-        <Video source={{uri: video.uri}} />
+
         <TouchableOpacity
           style={styles.changeImage}
           onPress={() => sheetRef.current.snapTo(0)}>
-          <Text style={{color: '#3897F0'}}>Change Profile Photo</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.videoChose}
-          onPress={() => VideoRef.current.snapTo(0)}>
-          <Text style={{color: '#3897F0'}}>choisir un mini video</Text>
+          <Text style={{color: '#3897F0'}}>modifier ma photo de profil</Text>
         </TouchableOpacity>
       </View>
       <Text style={{fontSize: 15, color: 'white', marginLeft: 15}}>
         Informations Generales :{' '}
       </Text>
       <Input
-        title="Pseudo"
+        placeholder="modifier votre Pseudo"
+        title="Pseudo :"
         value={userInfo.userName}
         onChange={e => {
           setUserInfo({...userInfo, userName: e});
@@ -298,7 +282,8 @@ const EditProfile = ({route, navigation}) => {
       />
       <Divider style={{backgroundColor: 'black'}} />
       <Input
-        title="Nom"
+        placeholder="modifier votre Nom"
+        title="Nom :"
         value={userInfo.firstName}
         onChange={e => {
           setUserInfo({...userInfo, firstName: e});
@@ -306,7 +291,8 @@ const EditProfile = ({route, navigation}) => {
       />
       <Divider style={{backgroundColor: 'black'}} />
       <Input
-        title="Prenom"
+        placeholder="modifier votre Prenom"
+        title="Prenom :"
         value={userInfo.lastName}
         onChange={e => {
           setUserInfo({...userInfo, lastName: e});
@@ -314,7 +300,8 @@ const EditProfile = ({route, navigation}) => {
       />
       <Divider style={{backgroundColor: 'black'}} />
       <Input
-        title="Bio"
+        placeholder="modifier votre biographie"
+        title="Bio :"
         value={userInfo.bio}
         onChange={e => {
           setUserInfo({...userInfo, bio: e});
@@ -326,16 +313,20 @@ const EditProfile = ({route, navigation}) => {
         Informations Privées :{' '}
       </Text>
       <Input
-        title="E-mail"
+        placeholder="modifier votre E-mail"
+        title="E-mail :"
         value={userInfo.email}
         onChange={e => {
           setUserInfo({...userInfo, email: e});
         }}
       />
       <Divider style={{backgroundColor: 'black'}} />
-      <Input title="Num TLF" value={userInfo.phone} />
-      <Divider style={{backgroundColor: 'black'}} />
-      <Input title="Sexe" value={userInfo.sexe ? userInfo.sexe : 'no data'} />
+      <Input
+        placeholder="Numéro de téléphone"
+        title="Numéro de téléphone :"
+        value={userInfo.phone}
+      />
+
       <Divider style={{backgroundColor: 'black'}} />
     </ScrollView>
   );

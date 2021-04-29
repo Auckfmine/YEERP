@@ -15,6 +15,6 @@ export default combineReducers({
   userPhotos: userPhotosReducer,
   userVideos: userVideosReducer,
   passwordResetRequest: passwordResetReducer,
-  checkInternet: checkInternetReducer,
+  //checkInternet: checkInternetReducer,
   verificationCode: checkVerificationCodeReducer,
 });

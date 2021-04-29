@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState, useEffect} from 'react';
@@ -27,6 +28,8 @@ const UserVideos = ({navigation}) => {
 
     dispatch(getUserVideos(json.user._id));
   };
+
+  //dispatch getVideos action from redux to get the videos of the user
   useEffect(() => {
     getVideos();
   }, []);

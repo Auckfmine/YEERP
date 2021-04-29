@@ -2,11 +2,12 @@
 import React from 'react';
 import {StyleSheet, Text, View, TextInput} from 'react-native';
 
-const Input = ({title, value, onChange}) => {
+const Input = ({title, value, onChange, placeholder}) => {
   return (
     <View style={styles.userInfo}>
       <Text style={styles.pseudo}>{title}</Text>
       <TextInput
+        placeholder={placeholder}
         style={styles.centerTextInput}
         value={value}
         placeholderTextColor="white"
@@ -33,6 +34,6 @@ const styles = StyleSheet.create({
     borderBottomColor: 'white',
 
     color: 'white',
-    marginHorizontal: 50,
+    marginHorizontal: '5%',
   },
 });

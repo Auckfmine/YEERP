@@ -1,38 +1,48 @@
 /* eslint-disable prettier/prettier */
 import React, {useState} from 'react';
-import {TextInput} from 'react-native';
-import {StyleSheet, Text, View, Image, Platform} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Platform,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import api from '../../../../api/apiCall';
-import {getUserPhotos} from '../../../../redux/user/imagesAction';
 import {Alert} from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {ActivityIndicator} from 'react-native-paper';
 const Music = () => {
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [cover, setCover] = useState({
-    uri:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtyvqdBZkfk-EBfl3NcBVd5KAh7mE-oP-cxQ&usqp=CAU',
+    uri: null,
   });
   const USER_ID = useSelector(state => state.user.user._id);
-  const dispatch = useDispatch();
 
   const createFormData = (photo, cover, body = {}) => {
     const data = new FormData();
 
-    data.append('file', {
-      name: photo.name,
-      type: photo.type,
-      uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
-    });
+    if (photo) {
+      data.append('file', {
+        name: photo.name,
+        type: photo.type,
+        uri:
+          Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+      });
+    }
 
-    data.append('artwork', {
-      name: cover.name,
-      type: cover.type,
-      uri: Platform.OS === 'ios' ? cover.uri.replace('file://', '') : cover.uri,
-    });
+    if (cover.uri) {
+      data.append('artwork', {
+        name: cover.name,
+        type: cover.type,
+        uri:
+          Platform.OS === 'ios' ? cover.uri.replace('file://', '') : cover.uri,
+      });
+    }
 
     Object.keys(body).forEach(key => {
       data.append(key, body[key]);
@@ -44,9 +54,9 @@ const Music = () => {
   const handleChoosePhoto = async () => {
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
+        type: [DocumentPicker.types.audio],
       });
-      console.log(res);
+      //console.log(res);
       setImage(res);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -61,7 +71,7 @@ const Music = () => {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.images],
       });
-      console.log(res);
+      //console.log(res);
       setCover(res);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -83,15 +93,24 @@ const Music = () => {
       .then(response => {
         console.log('response', response.data);
 
-        Alert.alert('Ajout de Photo', 'Photo Ajoutée avec Succés');
+        setIsLoading(false);
+        Alert.alert('Ajout de Musique', 'Piéce Musicale Ajoutée avec Succés');
+        setCover({uri: null});
+        setImage(null);
       })
       .catch(error => {
         console.log('error', error.message);
+        setIsLoading(false);
+        setCover({uri: null});
+        setImage(null);
+        Alert.alert(
+          'Ajout de Musique',
+          'veuillez selectioner le fichier mp3  avant de confirmer',
+        );
       });
-    setIsLoading(false);
   };
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView style={styles.container}>
       <View style={styles.photoContainer}>
         <View>
           <Image
@@ -101,7 +120,11 @@ const Music = () => {
               alignSelf: 'center',
               borderRadius: 20,
             }}
-            source={{uri: cover.uri}}
+            source={
+              !cover.uri
+                ? require('../../../assets/images/addImage.jpg')
+                : {uri: cover.uri}
+            }
           />
         </View>
         <Text style={{color: 'white', fontSize: 20}}>
@@ -110,7 +133,7 @@ const Music = () => {
       </View>
       <View style={styles.descriptionContainer}>
         <TextInput
-          style={{width: '100%'}}
+          style={{width: '100%', color: 'white'}}
           placeholderTextColor="white"
           placeholder="Description (optionnelle) ..."
         />
@@ -121,7 +144,7 @@ const Music = () => {
           onPress={() => handleChooseCover()}>
           <Text
             style={{color: 'white', textAlign: 'center', marginVertical: 5}}>
-            Choisir cover
+            Choisir cover (optionnel)
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -140,8 +163,18 @@ const Music = () => {
             confirmer
           </Text>
         </TouchableOpacity>
+        <View>
+          {isLoading ? (
+            <View style={{marginTop: 10}}>
+              <ActivityIndicator color="white" size="small" />
+              <Text style={{color: 'white', alignSelf: 'center'}}>
+                telechargement ...{' '}
+              </Text>
+            </View>
+          ) : null}
+        </View>
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 

@@ -20,20 +20,23 @@ import {getUserProfile} from '../../../redux/user/userAction';
 
 const Tab = createMaterialTopTabNavigator();
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({route, navigation}) => {
   const user = useSelector(state => state.user.user);
-  // console.log('userr', user);
+  const userr = route.params.id || route.params.local.user._id;
+
   const [isLoading, setIsLoading] = useState(true);
+
   const dispatch = useDispatch();
 
   //get the data from the api if there is no state stored in redux
   useEffect(() => {
-    dispatch(getUserProfile(user._id));
+    dispatch(getUserProfile(userr._id));
+
     //dispatch(getUserPhotos(local.user._id));
     setIsLoading(false);
 
     //if (!user.email) return getUser();
-  }, [dispatch, user._id]);
+  }, [user._id]);
   //console.log(isLoading);
   //console.log(user);
 
@@ -88,9 +91,7 @@ const ProfileScreen = ({navigation}) => {
             <View
               style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
               <Text style={styles.userInfoText}>{user.posts}</Text>
-              <Text style={styles.amis}>
-                {"0"}
-              </Text>
+              <Text style={styles.amis}>{'0'}</Text>
             </View>
           </View>
         </View>

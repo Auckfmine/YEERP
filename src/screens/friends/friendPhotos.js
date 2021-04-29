@@ -9,11 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useSelector} from 'react-redux';
-import {useDispatch} from 'react-redux';
-import {getUserPhotos} from '../../../redux/user/imagesAction';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../../../api/apiCall';
+
 import {fetchPhotos} from '../../../api/user/fetchUserPhotos';
 
 const screenSize = Dimensions.get('window').width;
@@ -23,14 +19,17 @@ const tile = screenSize / 3;
 const FriendPhotos = ({friendId, navigation}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [photos, setPhotos] = useState([]);
-  console.log(photos);
+
   const getFriendPhotos = () => {
-    fetchPhotos('6087285db0732f34f4c3936e')
+    fetchPhotos(friendId)
       .then(data => {
         setPhotos(data.photos);
         setIsLoading(false);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log('error', err);
+        setIsLoading(false);
+      });
   };
   useEffect(() => {
     getFriendPhotos();

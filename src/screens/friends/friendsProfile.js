@@ -20,11 +20,13 @@ import {getUserProfile} from '../../../redux/user/userAction';
 import api from '../../../api/apiCall';
 import FriendPhotos from './friendPhotos';
 import {Alert} from 'react-native';
+import FriendVideos from './friendVideos';
+import FriendMusic from './friendMusic';
 
 const Tab2 = createMaterialTopTabNavigator();
 
 const FriendProfileScreen = ({route, navigation}) => {
-  const user = useSelector(state => state.user.user);
+  const user = useSelector(state => state.user.user); //user Id  from the redux store
 
   // console.log('userr', user);
   const [isLoading, setIsLoading] = useState(true);
@@ -183,7 +185,7 @@ const FriendProfileScreen = ({route, navigation}) => {
             <>
               <TouchableOpacity
                 style={styles.chatContainer}
-                onPress={() => navigation.navigate('chat')}>
+                onPress={() => navigation.navigate('chat', {id: friend._id})}>
                 <Text style={{color: '#ffffff'}}>message</Text>
               </TouchableOpacity>
 
@@ -226,8 +228,10 @@ const FriendProfileScreen = ({route, navigation}) => {
                 <Icon name="md-image-outline" color="white" size={24} />
               ),
             }}
-            name="FriendMusic"
-            component={Music}
+            name="FriendsPosts"
+            children={() => (
+              <FriendPhotos navigation={navigation} friendId={friend._id} />
+            )}
           />
 
           <Tab2.Screen
@@ -237,7 +241,9 @@ const FriendProfileScreen = ({route, navigation}) => {
               ),
             }}
             name="FriendVideos"
-            component={Videos}
+            children={() => (
+              <FriendVideos navigation={navigation} friendId={friend._id} />
+            )}
           />
           <Tab2.Screen
             options={{
@@ -249,8 +255,8 @@ const FriendProfileScreen = ({route, navigation}) => {
                 />
               ),
             }}
-            name="FriendsPosts"
-            component={FriendPhotos}
+            name="FriendMusic"
+            component={FriendMusic}
           />
         </Tab2.Navigator>
       </View>

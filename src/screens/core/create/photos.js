@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {TextInput} from 'react-native';
 import {StyleSheet, Text, View, Image, Platform} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -8,10 +8,12 @@ import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import api from '../../../../api/apiCall';
 import {getUserPhotos} from '../../../../redux/user/imagesAction';
 import {Alert} from 'react-native';
+import {ActivityIndicator} from 'react-native-paper';
+
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 const Photos = () => {
   const [image, setImage] = useState({
-    uri:
-      'https://wearesocial-net.s3.amazonaws.com/wp-content/uploads/2017/08/video-facebook.jpg',
+    uri: null,
   });
   const [isLoading, setIsLoading] = useState(false);
   const USER_ID = useSelector(state => state.user.user._id);
@@ -32,6 +34,9 @@ const Photos = () => {
 
     return data;
   };
+  useEffect(() => {
+    console.log('refreshing');
+  }, []);
 
   const handleTakePhoto = () => {
     launchCamera({mediaType: 'photo', saveToPhotos: true}, response => {
@@ -62,28 +67,38 @@ const Photos = () => {
         },
       })
       .then(response => {
-        console.log('response', response.data);
+        //console.log('response', response.data);
         dispatch(getUserPhotos(USER_ID));
+        setIsLoading(false);
+        setImage({uri: null});
         Alert.alert('Ajout de Photo', 'Photo Ajoutée avec Succés');
       })
       .catch(error => {
-        console.log('error', error.message);
+        //console.log('error', error.message);
+        setIsLoading(false);
+        Alert.alert(
+          'Problem survenu',
+          'veuillez selectionnez une photo avant de confirmer',
+        );
       });
-    setIsLoading(false);
   };
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView style={styles.container}>
       <View style={styles.photoContainer}>
         <Image
           style={{width: 200, height: 200, borderRadius: 20}}
-          source={{
-            uri: image.uri,
-          }}
+          source={
+            !image.uri
+              ? require('../../../assets/images/addPhoto.jpg')
+              : {
+                  uri: image.uri,
+                }
+          }
         />
       </View>
       <View style={styles.descriptionContainer}>
         <TextInput
-          style={{width: '100%'}}
+          style={{width: '100%', color: 'white'}}
           placeholderTextColor="white"
           placeholder="Description (optionnelle) ..."
         />
@@ -113,8 +128,20 @@ const Photos = () => {
             confirmer
           </Text>
         </TouchableOpacity>
+        {isLoading ? (
+          <View>
+            <ActivityIndicator
+              style={{marginTop: 10}}
+              color="white"
+              size="small"
+            />
+            <Text style={{color: 'white', alignSelf: 'center'}}>
+              en cours ...
+            </Text>
+          </View>
+        ) : null}
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 

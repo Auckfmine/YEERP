@@ -21,7 +21,7 @@ const CoreRoutes = ({navigation}) => {
     <Tab.Navigator
       initialRouteName="Profiles"
       tabBarOptions={{
-        style: {position: 'absolute', backgroundColor: 'black'},
+        style: {backgroundColor: 'black'},
         showLabel: false,
       }}>
       <Tab.Screen

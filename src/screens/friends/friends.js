@@ -1,21 +1,16 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator} from 'react-native';
 import {StyleSheet, Text, View, FlatList, Image} from 'react-native';
 import api from '../../../api/apiCall';
 import {Card, SearchBar} from 'react-native-elements';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch, useSelector} from 'react-redux';
-import {getUserProfile} from '../../../redux/user/userAction';
 import Feather from 'react-native-vector-icons/Feather';
 
 const SearchFriends = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  const [errors, setErros] = useState([]);
   const [search, setSearch] = useState('');
   const currentUser = useSelector(state => state.user.user);
 
@@ -25,7 +20,7 @@ const SearchFriends = ({navigation}) => {
   useEffect(() => {
     const getFriends = async () => {
       const response = await api.get(`getAllFriends/${currentUser._id}`);
-      console.log("friend",response.data.friends[0].friends);
+      console.log('friend', response.data.friends[0].friends);
       setUsers(response.data.friends[0].friends);
     };
     getFriends();

@@ -1,7 +1,14 @@
 /* eslint-disable prettier/prettier */
 import React, {useState} from 'react';
 import {TextInput} from 'react-native';
-import {StyleSheet, Text, View, Image, Platform} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Platform,
+  ActivityIndicator,
+} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector, useDispatch} from 'react-redux';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
@@ -12,10 +19,11 @@ import {getUserVideos} from '../../../../redux/user/videos/videoActions';
 import Video from 'react-native-video';
 import RNFS from 'react-native-fs';
 import DocumentPicker from 'react-native-document-picker';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 const Videos = () => {
-  const [image, setImage] = useState();
+  const [image, setImage] = useState(null);
   const [thumb, setThumb] = useState({
-    uri: 'https://www.iab.com/wp-content/uploads/2017/11/Video_Marketing.jpg',
+    uri: null,
   });
   const [isLoading, setIsLoading] = useState(false);
   const USER_ID = useSelector(state => state.user.user._id);
@@ -30,17 +38,22 @@ const Videos = () => {
 
   const createFormData = (photo, cover, body = {}) => {
     const data = new FormData();
-    console.log('video', photo);
-    data.append('file', {
-      name: photo.name,
-      type: photo.type,
-      uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
-    });
-    data.append('thumbnail', {
-      name: cover.name,
-      type: cover.type,
-      uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
-    });
+    if (photo !== null) {
+      data.append('file', {
+        name: photo.name,
+        type: photo.type,
+        uri:
+          Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+      });
+    }
+    if (cover.uri) {
+      data.append('thumbnail', {
+        name: cover.name,
+        type: cover.type,
+        uri:
+          Platform.OS === 'ios' ? cover.uri.replace('file://', '') : cover.uri,
+      });
+    }
 
     Object.keys(body).forEach(key => {
       data.append(key, body[key]);
@@ -91,16 +104,22 @@ const Videos = () => {
       .then(response => {
         console.log('response', response.data);
         dispatch(getUserVideos(USER_ID));
+        setIsLoading(false);
         Alert.alert('Ajout de Video', 'Video Ajoutée avec Succés');
-        setImage({uri: ''});
+        setThumb({uri: null});
+        setImage(null);
       })
       .catch(error => {
         console.log('error', error.message);
+        Alert.alert(
+          'Ajout de Video',
+          'Veuillez selectionner un fichier mp4 avant de confirmer',
+        );
+        setIsLoading(false);
       });
-    setIsLoading(false);
   };
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView style={styles.container}>
       <View style={styles.photoContainer}>
         <View>
           <Image
@@ -110,16 +129,20 @@ const Videos = () => {
               alignSelf: 'center',
               borderRadius: 20,
             }}
-            source={{uri: thumb.uri}}
+            source={
+              !thumb.uri
+                ? require('../../../assets/images/addVideo.jpg')
+                : {uri: thumb.uri}
+            }
           />
         </View>
         <Text style={{color: 'white', fontSize: 20}}>
-          {!image ? '' : image.name}
+          {!image ? null : image.name}
         </Text>
       </View>
       <View style={styles.descriptionContainer}>
         <TextInput
-          style={{width: '100%'}}
+          style={{width: '100%', color: 'white'}}
           placeholderTextColor="white"
           placeholder="Description (optionnelle) ..."
         />
@@ -142,7 +165,6 @@ const Videos = () => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          disabled={!image ? true : false}
           style={styles.confirmer}
           onPress={() => handleUploadVideo()}>
           <Text
@@ -150,8 +172,20 @@ const Videos = () => {
             confirmer
           </Text>
         </TouchableOpacity>
+        {isLoading ? (
+          <View>
+            <ActivityIndicator
+              style={{marginTop: 10}}
+              color="white"
+              size="large"
+            />
+            <Text style={{color: 'white', alignSelf: 'center'}}>
+              en cours ...
+            </Text>
+          </View>
+        ) : null}
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 

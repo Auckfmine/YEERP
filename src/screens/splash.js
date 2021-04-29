@@ -3,9 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, Image} from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
 import * as Animatable from 'react-native-animatable';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {NetworkConsumer, useIsConnected} from 'react-native-offline';
 import {useDispatch} from 'react-redux';
 import {getUserProfile} from '../../redux/user/userAction';
 const CostumProgressBar = Animatable.createAnimatableComponent(ProgressBar);
@@ -14,8 +12,8 @@ const Splash = ({navigation}) => {
   const [progress, setProgress] = useState(0);
   const [localData, setLocalData] = useState(null);
   const dispatch = useDispatch();
-  const isConnected = useIsConnected();
 
+  //check if userData  exists in localStorage
   useEffect(() => {
     const getData = async () => {
       try {
@@ -31,19 +29,26 @@ const Splash = ({navigation}) => {
     getData();
   }, []);
 
+  //this is to make the animation of the progress bar
   useEffect(() => {
     animate();
   }, []);
 
+  //decide either redirect user to login or to home page based on localStorage content
   useEffect(() => {
     if (progress === 1) {
       if (localData) {
         dispatch(getUserProfile(localData.user._id));
-        return navigation.navigate('Main');
+        return navigation.navigate('Main', {
+          screen: 'Profile2',
+          params: {screen: 'Profiles', params: {id: localData.user._id}},
+        });
       }
       return navigation.navigate('Login');
     }
   }, [dispatch, navigation, localData, progress]);
+
+  //this is the animation of the progress bar
   const animate = () => {
     let progress = 0;
     setProgress(progress);
@@ -58,6 +63,7 @@ const Splash = ({navigation}) => {
     }, 4000);
   };
 
+  //test if the phone is connected to internet or no
   /*if (!isConnected) {
     return (
       <AwesomeAlert
@@ -82,7 +88,7 @@ const Splash = ({navigation}) => {
           delay={1000}
           animation="fadeIn"
           style={styles.logo}
-          source={require('../assets/images/logo-3.png')}
+          source={require('../assets/images/logoFinal.png')}
         />
       </View>
       <Animatable.Text delay={3000} animation="fadeIn" style={styles.brand}>

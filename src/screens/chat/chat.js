@@ -2,11 +2,12 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 import SocketIOClient from 'socket.io-client';
-import {GiftedChat, Bubble, Send} from 'react-native-gifted-chat';
+import {GiftedChat, Bubble, Send, Avatar} from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector} from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const USER_ID = 'user';
+const BASEURL = 'https://yeerp.herokuapp.com';
 
 class Chat extends React.Component {
   constructor(props) {
@@ -15,13 +16,13 @@ class Chat extends React.Component {
       messages: [],
       userId: null,
     };
-
+    this.friendId = this.props.route.params.id;
     this.determineUser = this.determineUser.bind(this);
     this.onReceivedMessage = this.onReceivedMessage.bind(this);
     this.onSend = this.onSend.bind(this);
     this._storeMessages = this._storeMessages.bind(this);
 
-    this.socket = SocketIOClient('http://10.0.2.2:8000');
+    this.socket = SocketIOClient(BASEURL); // connect the client  socket  with the backend
     this.socket.on('message', this.onReceivedMessage);
     this.determineUser();
   }

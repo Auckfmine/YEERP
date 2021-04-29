@@ -19,7 +19,9 @@ const tile = screenSize / 3;
 const UserPosts = ({navigation}) => {
   const [music, setMusic] = useState([]);
   const [isLoading, setLoading] = useState(false);
-  const userId = useSelector(state => state.user.user._id);
+  const userId = useSelector(state => state.user.user._id); //from the redux store
+
+  //this function calls the backend to fech the user Music
   const getMusic = () => {
     if (userId === undefined) {
       return setLoading(true);
@@ -31,8 +33,10 @@ const UserPosts = ({navigation}) => {
         setMusic(track.data.tracks);
         setLoading(false);
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log('error', err));
   };
+
+  //fetch user's music each time the components mounts or the user id changes
   useEffect(() => {
     getMusic();
   }, [userId]);
